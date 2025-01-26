@@ -47,10 +47,10 @@ const calcRandomBeat = (binaural: keyof typeof BINAURAL_FREQ) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-const calcFreq = (side: 'left' | 'right', solfeggio: keyof typeof solfeggio_FREQ, binaural: keyof typeof BINAURAL_FREQ) => {
+const calcFreq = (side: 'left' | 'right', solfeggio: keyof typeof solfeggio_FREQ, binaural: keyof typeof BINAURAL_FREQ, beat?: number) => {
   const solfeggioFreq = solfeggio_FREQ[solfeggio];
   if (side === 'left') return solfeggioFreq;
-  return calcRandomBeat(binaural) + solfeggioFreq;
+  return (beat || calcRandomBeat(binaural)) + solfeggioFreq;
 }
 
 function App() {
@@ -85,10 +85,20 @@ function App() {
     updateNoise();
   }, [noiseType]);  
 
+  const updateSynthFrequency = (synth: Tone.Synth, options: {frequency: number}) => {
+    synth.frequency.exponentialRampTo(options.frequency, 1);
+  }
+
+  const updateHarmonicFrequency = (synth: Tone.Oscillator, options: {frequency: number}) => {
+    synth.frequency.exponentialRampTo(options.frequency, 1);
+  }
+
   const updateLeftFrequency = () => {
     const leftFreq = calcFreq('left', solfeggio, binaural);
     setLeftOptions({frequency: leftFreq, pan: -1});
     updateSynthFrequency(synthLeft.current, {frequency: leftFreq});
+    
+    updateHarmonicFrequency(harmonic.current, {frequency: leftFreq * 1.5});
   }
 
   const updateRightFrequency = () => {
@@ -106,10 +116,6 @@ function App() {
       synthNoise.current.volume.value = noiseType === 'white' ? -30 : -20;
       synthNoise.current.start();
     }
-  }
-
-  const updateSynthFrequency = (synth: Tone.Synth, options: {frequency: number}) => {
-    synth.frequency.exponentialRampTo(options.frequency, 1);
   }
 
   const synthLeft = useRef(new Tone.Synth({
@@ -132,6 +138,12 @@ function App() {
   const synthNoise = useRef(new Tone.Noise({
     type: noiseType === 'off' ? 'white' : noiseType,
     volume: noiseType === 'white' ? -40 : -30,
+  }).connect(new Tone.Panner(0).toDestination())
+  );
+
+  const harmonic = useRef(new Tone.Oscillator({
+    type: "sine",
+    volume: -20,
   }).connect(new Tone.Panner(0).toDestination())
   );
 
@@ -158,10 +170,12 @@ function App() {
     if (!isPlaying) {
       synthLeft.current.triggerAttack(leftFrequency);
       synthRight.current.triggerAttack(rightFrequency);
+      harmonic.current.start('+0', leftFrequency + (newLeft.frequency * 1.5));
       if (noiseType !== 'off') synthNoise.current.start();
     } else {
       synthLeft.current.triggerRelease();
       synthRight.current.triggerRelease();
+      harmonic.current.stop();
       synthNoise.current.stop();
     }
     setIsPlaying(!isPlaying);
