@@ -1,11 +1,11 @@
-import { useState, useRef } from 'react'
+import { useState, useRef, useEffect } from 'react'
 import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import * as Tone from 'tone';
 import { Radio, RadioGroup, FormControlLabel } from '@mui/material';
 
-const SOFLEGGIO_FREQ = {
+const solfeggio_FREQ = {
   foundation: 174,
   healing: 285,
   ut: 396,
@@ -40,87 +40,135 @@ const BINAURAL_FREQ = {
   },
 }
 
-const calcFreq = (side: 'left' | 'right', solfeggio: keyof typeof SOFLEGGIO_FREQ, binaural: keyof typeof BINAURAL_FREQ) => {
-  const solfeggioFreq = SOFLEGGIO_FREQ[solfeggio];
-  if (side === 'left') return solfeggioFreq;
+const calcRandomBeat = (binaural: keyof typeof BINAURAL_FREQ) => {
   const binauralFreq = BINAURAL_FREQ[binaural];
   const min = binauralFreq.min;
   const max = binauralFreq.max;
-  return Math.floor(Math.random() * (max - min + 1)) + min + solfeggioFreq;
+  return Math.floor(Math.random() * (max - min + 1)) + min;
+}
+
+const calcFreq = (side: 'left' | 'right', solfeggio: keyof typeof solfeggio_FREQ, binaural: keyof typeof BINAURAL_FREQ) => {
+  const solfeggioFreq = solfeggio_FREQ[solfeggio];
+  if (side === 'left') return solfeggioFreq;
+  return calcRandomBeat(binaural) + solfeggioFreq;
 }
 
 function App() {
   const [isPlaying, setIsPlaying] = useState(false);
-  const [sofleggio, setSofleggio] = useState<keyof typeof SOFLEGGIO_FREQ>('ut');
+  const [solfeggio, setsolfeggio] = useState<keyof typeof solfeggio_FREQ>('ut');
   const [binaural, setBinaural] = useState<keyof typeof BINAURAL_FREQ>('alpha');
-  const [noiseType, setNoiseType] = useState<'white' | 'pink' | 'brown'>('white');
-
-  const updateFrequencies = () => {
-    const leftFreq = calcFreq('left', sofleggio, binaural);
-    const rightFreq = calcFreq('right', sofleggio, binaural);
-    setLeftOptions({frequency: leftFreq, pan: -1});
-    setRightOptions({frequency: rightFreq, pan: 1});
-    console.log('left', leftOptions, 'right', rightOptions, 'noise', noiseType);
-    if (isPlaying) {
-      synthLeft.current.frequency.setValueAtTime(leftFreq, Tone.now());
-      synthRight.current.frequency.setValueAtTime(rightFreq, Tone.now());
-      synthNoise.current.type = noiseType;
-    }
-  }
-
+  const [noiseType, setNoiseType] = useState<'white' | 'pink' | 'brown' | 'off'>('off');
+  const [beat, setBeat] = useState(0);
   const [leftOptions, setLeftOptions] = useState({
-    frequency: 440,
+    frequency: 0,
     pan: -1,
   });
   const [rightOptions, setRightOptions] = useState({
-    frequency: 442,
+    frequency: 0,
     pan: 1,
   });
+
+
+  useEffect(() => {
+    console.log('solfeggio', solfeggio, 'binaural', binaural, 'noiseType', noiseType);
+  }, [solfeggio, binaural, noiseType]);
+
+  useEffect(() => {
+    updateLeftFrequency();
+  }, [solfeggio]);
+
+  useEffect(() => {
+    updateRightFrequency();
+  }, [binaural, leftOptions.frequency]);
+
+  useEffect(() => {
+    updateNoise();
+  }, [noiseType]);  
+
+  const updateLeftFrequency = () => {
+    const leftFreq = calcFreq('left', solfeggio, binaural);
+    setLeftOptions({frequency: leftFreq, pan: -1});
+    updateSynthFrequency(synthLeft.current, {frequency: leftFreq});
+  }
+
+  const updateRightFrequency = () => {
+    const rightFreq = calcFreq('right', solfeggio, binaural);
+    setRightOptions({frequency: rightFreq, pan: 1});
+    setBeat(rightFreq - leftOptions.frequency);
+    updateSynthFrequency(synthRight.current, {frequency: rightFreq});
+  }
+
+  const updateNoise = () => {
+    if (noiseType === 'off') {
+      synthNoise.current.stop();
+    } else {
+      synthNoise.current.type = noiseType;
+      synthNoise.current.volume.value = noiseType === 'white' ? -30 : -20;
+      synthNoise.current.start();
+    }
+  }
+
+  const updateSynthFrequency = (synth: Tone.Synth, options: {frequency: number}) => {
+    synth.frequency.exponentialRampTo(options.frequency, 1);
+  }
 
   const synthLeft = useRef(new Tone.Synth({
     oscillator: {
       type: "sine",
       volume: -20,
     }
-  }).connect(new Tone.Panner(leftOptions.pan).toDestination()));
+  }).connect(new Tone.Panner(leftOptions.pan).toDestination())
+  );
 
   const synthRight = useRef(new Tone.Synth({
     oscillator: {
       type: "sine",
       volume: -20,
-    }
-  }).connect(new Tone.Panner(rightOptions.pan).toDestination()));
+    },
+    portamento: 10,
+  }).connect(new Tone.Panner(rightOptions.pan).toDestination())
+  );
 
   const synthNoise = useRef(new Tone.Noise({
-    type: noiseType,
-    volume: -20,
-  }).connect(new Tone.Panner(0).toDestination()));
+    type: noiseType === 'off' ? 'white' : noiseType,
+    volume: noiseType === 'white' ? -40 : -30,
+  }).connect(new Tone.Panner(0).toDestination())
+  );
 
   const playTone = async () => {
     const { frequency: leftFrequency } = leftOptions;
     const { frequency: rightFrequency } = rightOptions;
 
-    setLeftOptions({
-      frequency: calcFreq('left', sofleggio, binaural),
-      pan: -1,
-    });
-    setRightOptions({
-      frequency: calcFreq('right', sofleggio, binaural),
-      pan: 1,
-    });
+    const newLeft = {
+      ...leftOptions,
+      frequency: calcFreq('left', solfeggio, binaural),
+    };
+    const newRight = {
+      ...rightOptions,
+      frequency: calcFreq('right', solfeggio, binaural),
+    };
+
+    setLeftOptions(newLeft);
+    setRightOptions(newRight);
+    setBeat(newRight.frequency - newLeft.frequency);
+
     if (Tone.getContext().state !== "running") {
       await Tone.start();
     }
     if (!isPlaying) {
       synthLeft.current.triggerAttack(leftFrequency);
       synthRight.current.triggerAttack(rightFrequency);
-      synthNoise.current.start();
+      if (noiseType !== 'off') synthNoise.current.start();
     } else {
       synthLeft.current.triggerRelease();
       synthRight.current.triggerRelease();
       synthNoise.current.stop();
     }
     setIsPlaying(!isPlaying);
+  }
+
+  const randomizeBeat = () => {
+    updateRightFrequency();
   }
 
   return (
@@ -138,13 +186,12 @@ function App() {
         <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center' }}>
           <div>
             <RadioGroup
-              value={sofleggio}
+              value={solfeggio}
               onChange={(e) => {
-                setSofleggio(e.target.value as keyof typeof SOFLEGGIO_FREQ);
-                updateFrequencies();
+                setsolfeggio(e.target.value as keyof typeof solfeggio_FREQ);
               }}
             >
-              <p>Base Frequency</p>
+              <h2>Base Frequency</h2>
               <FormControlLabel value="foundation" control={<Radio />} label="Foundation" />
               <FormControlLabel value="healing" control={<Radio />} label="Healing" /> 
               <FormControlLabel value="ut" control={<Radio />} label="Ut" />
@@ -161,10 +208,9 @@ function App() {
               value={binaural}
               onChange={(e) => {
                 setBinaural(e.target.value as keyof typeof BINAURAL_FREQ);
-                updateFrequencies();
               }}
             >
-              <p>Binaural Frequency</p>
+              <h2>Binaural Frequency</h2>
               <FormControlLabel value="delta" control={<Radio />} label="Delta" />
               <FormControlLabel value="theta" control={<Radio />} label="Theta" />
               <FormControlLabel value="alpha" control={<Radio />} label="Alpha" />
@@ -176,11 +222,11 @@ function App() {
             <RadioGroup
               value={noiseType}
               onChange={(e) => {
-                setNoiseType(e.target.value as 'white' | 'pink' | 'brown');
-                updateFrequencies();
+                setNoiseType(e.target.value as 'white' | 'pink' | 'brown' | 'off');
               }}
             >
-              <p>Noise Type</p>
+              <h2>Noise Type</h2>
+              <FormControlLabel value="off" control={<Radio />} label="Off" />
               <FormControlLabel value="white" control={<Radio />} label="White" />
               <FormControlLabel value="pink" control={<Radio />} label="Pink" />
               <FormControlLabel value="brown" control={<Radio />} label="Brown" />
@@ -189,6 +235,9 @@ function App() {
         </div>
         <button onClick={() => playTone()}>
           {isPlaying ? 'stop' : 'play'}
+        </button>
+        <button disabled={!isPlaying} onClick={() => randomizeBeat()}>
+          {isPlaying ? `${beat} Hz` : 'beat'}
         </button>
       </div>
     </>
