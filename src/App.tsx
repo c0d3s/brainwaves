@@ -3,7 +3,7 @@ import reactLogo from './assets/react.svg'
 import viteLogo from '/vite.svg'
 import './App.css'
 import * as Tone from 'tone';
-import { Radio, RadioGroup, FormControlLabel } from '@mui/material';
+import { Button, ButtonGroup } from '@mui/material';
 
 const solfeggio_FREQ = {
   foundation: 174,
@@ -185,52 +185,51 @@ function App() {
       <div className="card">
         <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center' }}>
           <div>
-            <RadioGroup
-              value={solfeggio}
-              onChange={(e) => {
-                setsolfeggio(e.target.value as keyof typeof solfeggio_FREQ);
-              }}
-            >
-              <h2>Base Frequency</h2>
-              <FormControlLabel value="foundation" control={<Radio />} label="Foundation" />
-              <FormControlLabel value="healing" control={<Radio />} label="Healing" /> 
-              <FormControlLabel value="ut" control={<Radio />} label="Ut" />
-              <FormControlLabel value="re" control={<Radio />} label="Re" />
-              <FormControlLabel value="mi" control={<Radio />} label="Mi" />
-              <FormControlLabel value="fa" control={<Radio />} label="Fa" />
-              <FormControlLabel value="sol" control={<Radio />} label="Sol" />
-              <FormControlLabel value="la" control={<Radio />} label="La" />
-              <FormControlLabel value="universe" control={<Radio />} label="Universe" />
-            </RadioGroup>
+            <h2>Base Frequency</h2>
+            <ButtonGroup orientation="vertical" variant="contained">
+              {Object.entries(solfeggio_FREQ).map(([key]) => (
+                <Button
+                  key={key}
+                  onClick={() => setsolfeggio(key as keyof typeof solfeggio_FREQ)}
+                  variant={solfeggio === key ? 'contained' : 'outlined'}
+                  color={solfeggio === key ? 'primary' : 'inherit'}
+                >
+                  {key.charAt(0).toUpperCase() + key.slice(1)}
+                </Button>
+              ))}
+            </ButtonGroup>
           </div>
+
           <div>
-            <RadioGroup
-              value={binaural}
-              onChange={(e) => {
-                setBinaural(e.target.value as keyof typeof BINAURAL_FREQ);
-              }}
-            >
-              <h2>Binaural Frequency</h2>
-              <FormControlLabel value="delta" control={<Radio />} label="Delta" />
-              <FormControlLabel value="theta" control={<Radio />} label="Theta" />
-              <FormControlLabel value="alpha" control={<Radio />} label="Alpha" />
-              <FormControlLabel value="beta" control={<Radio />} label="Beta" />
-              <FormControlLabel value="gamma" control={<Radio />} label="Gamma" />
-            </RadioGroup>
+            <h2>Binaural Frequency</h2>
+            <ButtonGroup orientation="vertical" variant="contained">
+              {Object.keys(BINAURAL_FREQ).map((key) => (
+                <Button
+                  key={key}
+                  onClick={() => setBinaural(key as keyof typeof BINAURAL_FREQ)}
+                  variant={binaural === key ? 'contained' : 'outlined'}
+                  color={binaural === key ? 'primary' : 'inherit'}
+                >
+                  {key.charAt(0).toUpperCase() + key.slice(1)}
+                </Button>
+              ))}
+            </ButtonGroup>
           </div>
+
           <div>
-            <RadioGroup
-              value={noiseType}
-              onChange={(e) => {
-                setNoiseType(e.target.value as 'white' | 'pink' | 'brown' | 'off');
-              }}
-            >
-              <h2>Noise Type</h2>
-              <FormControlLabel value="off" control={<Radio />} label="Off" />
-              <FormControlLabel value="white" control={<Radio />} label="White" />
-              <FormControlLabel value="pink" control={<Radio />} label="Pink" />
-              <FormControlLabel value="brown" control={<Radio />} label="Brown" />
-            </RadioGroup>
+            <h2>Noise Type</h2>
+            <ButtonGroup orientation="vertical" variant="contained">
+              {['off', 'white', 'pink', 'brown'].map((type) => (
+                <Button
+                  key={type}
+                  onClick={() => setNoiseType(type as 'white' | 'pink' | 'brown' | 'off')}
+                  variant={noiseType === type ? 'contained' : 'outlined'}
+                  color={noiseType === type ? 'primary' : 'inherit'}
+                >
+                  {type.charAt(0).toUpperCase() + type.slice(1)}
+                </Button>
+              ))}
+            </ButtonGroup>
           </div>
         </div>
         <button onClick={() => playTone()}>
