@@ -1,9 +1,13 @@
 import { useState, useRef, useEffect } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
+import brainwavesLogo from './assets/brainwaves.svg'
 import './App.css'
 import * as Tone from 'tone';
-import { Button, ButtonGroup } from '@mui/material';
+import { Button, ButtonGroup, IconButton } from '@mui/material';
+import { AirOutlined, GraphicEqOutlined, WaterOutlined,  } from '@mui/icons-material';
+
+declare global {
+  interface Window { synthLeft: any; synthRight: any; synthNoise: any; harmonic: any; harmonicLFO: any; }
+}
 
 const solfeggio_FREQ = {
   foundation: 174,
@@ -19,7 +23,7 @@ const solfeggio_FREQ = {
 
 const BINAURAL_FREQ = {
   delta: {
-    min: 1,
+    min: 0.5,
     max: 4,
   },
   theta: {
@@ -31,12 +35,12 @@ const BINAURAL_FREQ = {
     max: 13,
   },
   beta: {
-    min: 14,
+    min: 13,
     max: 30,
   },
   gamma: {
-    min: 30,
-    max: 100,
+    min: 25,
+    max: 34.75,
   },
 }
 
@@ -67,7 +71,10 @@ function App() {
     frequency: 0,
     pan: 1,
   });
-
+  const [harmonicOptions, setHarmonicOptions] = useState({
+    frequency: 0,
+    pan: 0,
+  });
 
   useEffect(() => {
     console.log('solfeggio', solfeggio, 'binaural', binaural, 'noiseType', noiseType);
@@ -89,17 +96,22 @@ function App() {
     synth.frequency.exponentialRampTo(options.frequency, 1);
   }
 
-  const updateHarmonicFrequency = (synth: Tone.Oscillator, options: {frequency: number}) => {
-    synth.frequency.exponentialRampTo(options.frequency, 1);
+  const updateHarmonicFrequency = () => {
+    const harmonicFreq = leftOptions.frequency * 1.5;
+    setHarmonicOptions({frequency: harmonicFreq, pan: 0});
+    harmonic.current.frequency.linearRampTo(harmonicFreq, 1);
   }
 
   const updateLeftFrequency = () => {
     const leftFreq = calcFreq('left', solfeggio, binaural);
     setLeftOptions({frequency: leftFreq, pan: -1});
     updateSynthFrequency(synthLeft.current, {frequency: leftFreq});
-    
-    updateHarmonicFrequency(harmonic.current, {frequency: leftFreq * 1.5});
+    updateHarmonicFrequency();
   }
+
+  useEffect(() => {
+    updateHarmonicFrequency();
+  }, [leftOptions.frequency]);
 
   const updateRightFrequency = () => {
     const rightFreq = calcFreq('right', solfeggio, binaural);
@@ -147,6 +159,14 @@ function App() {
   }).connect(new Tone.Panner(0).toDestination())
   );
 
+  const harmonicLFO = useRef(new Tone.LFO({
+    type: "sine",
+    frequency: 0.1, // Speed of modulation (0.1 Hz = one cycle every 10 seconds)
+    min: -20,      // Minimum frequency offset in Hz
+    max: 20        // Maximum frequency offset in Hz
+  }).connect(harmonic.current.frequency)
+  );
+
   const playTone = async () => {
     const { frequency: leftFrequency } = leftOptions;
     const { frequency: rightFrequency } = rightOptions;
@@ -170,15 +190,22 @@ function App() {
     if (!isPlaying) {
       synthLeft.current.triggerAttack(leftFrequency);
       synthRight.current.triggerAttack(rightFrequency);
-      harmonic.current.start('+0', leftFrequency + (newLeft.frequency * 1.5));
+      harmonic.current.start('+0', harmonicOptions.frequency);
+      harmonicLFO.current.start();
       if (noiseType !== 'off') synthNoise.current.start();
     } else {
       synthLeft.current.triggerRelease();
       synthRight.current.triggerRelease();
       harmonic.current.stop();
+      harmonicLFO.current.stop();
       synthNoise.current.stop();
     }
     setIsPlaying(!isPlaying);
+    window.synthLeft = synthLeft.current;
+    window.synthRight = synthRight.current;
+    window.synthNoise = synthNoise.current;
+    window.harmonic = harmonic.current;
+    window.harmonicLFO = harmonicLFO.current;
   }
 
   const randomizeBeat = () => {
@@ -188,41 +215,55 @@ function App() {
   return (
     <>
       <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
+        <IconButton color="primary">
+          <img color='primary' src={brainwavesLogo} className="logo" alt="Brainwaves logo" />
+        </IconButton>
       </div>
-      <h1>Solfeggio + Binaural</h1>
       <div className="card">
         <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center' }}>
           <div>
-            <h2>Base Frequency</h2>
-            <ButtonGroup orientation="vertical" variant="contained">
-              {Object.entries(solfeggio_FREQ).map(([key]) => (
-                <Button
-                  key={key}
-                  onClick={() => setsolfeggio(key as keyof typeof solfeggio_FREQ)}
-                  variant={solfeggio === key ? 'contained' : 'outlined'}
-                  color={solfeggio === key ? 'primary' : 'inherit'}
-                >
-                  {key.charAt(0).toUpperCase() + key.slice(1)}
-                </Button>
-              ))}
-            </ButtonGroup>
+            <div>
+              <IconButton color="secondary">
+                <WaterOutlined />
+              </IconButton>
+            </div>
+            <div>
+              <ButtonGroup 
+                orientation="vertical" 
+                variant="contained" 
+                sx={{ '& .MuiButton-root': { marginBottom: '8px' } }}
+              >
+                {Object.entries(solfeggio_FREQ).map(([key]) => (
+                  <Button
+                    key={key}
+                    onClick={() => setsolfeggio(key as keyof typeof solfeggio_FREQ)}
+                    variant={solfeggio === key ? 'contained' : 'outlined'}
+                    color="primary"
+                  >
+                    {key.charAt(0).toUpperCase() + key.slice(1)}
+                  </Button>
+                ))}
+              </ButtonGroup>
+            </div>
           </div>
 
           <div>
-            <h2>Binaural Frequency</h2>
-            <ButtonGroup orientation="vertical" variant="contained">
+            <div>
+              <IconButton color="secondary">
+                <GraphicEqOutlined />
+              </IconButton>
+            </div>
+            <ButtonGroup 
+              orientation="vertical" 
+              variant="contained"
+              sx={{ '& .MuiButton-root': { marginBottom: '8px' } }}
+            >
               {Object.keys(BINAURAL_FREQ).map((key) => (
                 <Button
                   key={key}
                   onClick={() => setBinaural(key as keyof typeof BINAURAL_FREQ)}
                   variant={binaural === key ? 'contained' : 'outlined'}
-                  color={binaural === key ? 'primary' : 'inherit'}
+                  color="primary"
                 >
                   {key.charAt(0).toUpperCase() + key.slice(1)}
                 </Button>
@@ -231,14 +272,22 @@ function App() {
           </div>
 
           <div>
-            <h2>Noise Type</h2>
-            <ButtonGroup orientation="vertical" variant="contained">
+            <div>
+              <IconButton color="secondary">
+                <AirOutlined />
+              </IconButton>
+            </div>
+            <ButtonGroup 
+              orientation="vertical" 
+              variant="contained"
+              sx={{ '& .MuiButton-root': { marginBottom: '8px' } }}
+            >
               {['off', 'white', 'pink', 'brown'].map((type) => (
                 <Button
                   key={type}
                   onClick={() => setNoiseType(type as 'white' | 'pink' | 'brown' | 'off')}
                   variant={noiseType === type ? 'contained' : 'outlined'}
-                  color={noiseType === type ? 'primary' : 'inherit'}
+                  color="primary"
                 >
                   {type.charAt(0).toUpperCase() + type.slice(1)}
                 </Button>
