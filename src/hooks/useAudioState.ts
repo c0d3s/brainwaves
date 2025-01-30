@@ -1,7 +1,7 @@
 import { useState, useEffect } from 'react';
 import * as Tone from 'tone';
 import { calcFreq, calcRandomBeat } from '../utils';
-import { BINAURAL_FREQ, solfeggio_FREQ } from '../constants';
+import { BINAURAL_FREQ, SOLFEGGIO_FREQ } from '../constants';
 
 interface SynthRefs {
   synthLeft: React.RefObject<Tone.Synth>;
@@ -14,7 +14,7 @@ interface SynthRefs {
 export function useAudioState({ synthLeft, synthRight, synthNoise, harmonic, harmonicLFO }: SynthRefs) {
   // State declarations
   const [isPlaying, setIsPlaying] = useState(false);
-  const [solfeggio, setSolfeggio] = useState<keyof typeof solfeggio_FREQ>('ut');
+  const [solfeggio, setSolfeggio] = useState<keyof typeof SOLFEGGIO_FREQ>('ut');
   const [binaural, setBinaural] = useState<keyof typeof BINAURAL_FREQ>('alpha');
   const [noiseType, setNoiseType] = useState<'white' | 'pink' | 'brown' | 'off'>('off');
   const [beat, setBeat] = useState(0);

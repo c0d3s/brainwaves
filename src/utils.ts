@@ -1,11 +1,11 @@
-import { BINAURAL_FREQ, solfeggio_FREQ } from './constants';
+import { BINAURAL_FREQ, SOLFEGGIO_FREQ } from './constants';
 
 export function calcFreq(
   side: 'left' | 'right',
-  solfeggio: keyof typeof solfeggio_FREQ,
+  solfeggio: keyof typeof SOLFEGGIO_FREQ,
   binaural: keyof typeof BINAURAL_FREQ
 ) {
-  const baseFreq = solfeggio_FREQ[solfeggio];
+  const baseFreq = SOLFEGGIO_FREQ[solfeggio];
   const binauralFreq = BINAURAL_FREQ[binaural];
   
   return side === 'left' 

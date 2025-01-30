@@ -14,7 +14,7 @@ declare global {
   interface Window { synthLeft: any; synthRight: any; synthNoise: any; harmonic: any; harmonicLFO: any; }
 }
 
-const solfeggio_FREQ = {
+const SOLFEGGIO_FREQ = {
   foundation: 174,
   healing: 285,
   ut: 396,
@@ -56,8 +56,8 @@ const calcRandomBeat = (binaural: keyof typeof BINAURAL_FREQ) => {
   return Math.floor(Math.random() * (max - min + 1)) + min;
 }
 
-const calcFreq = (side: 'left' | 'right', solfeggio: keyof typeof solfeggio_FREQ, binaural: keyof typeof BINAURAL_FREQ, beat?: number) => {
-  const solfeggioFreq = solfeggio_FREQ[solfeggio];
+const calcFreq = (side: 'left' | 'right', solfeggio: keyof typeof SOLFEGGIO_FREQ, binaural: keyof typeof BINAURAL_FREQ, beat?: number) => {
+  const solfeggioFreq = SOLFEGGIO_FREQ[solfeggio];
   if (side === 'left') return solfeggioFreq;
   return (beat || calcRandomBeat(binaural)) + solfeggioFreq;
 }

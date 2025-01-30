@@ -6,7 +6,7 @@ export const BINAURAL_FREQ = {
   gamma: 40,
 } as const;
 
-export const solfeggio_FREQ = {
+export const SOLFEGGIO_FREQ = {
   ut: 396,
   re: 417,
   mi: 528,

@@ -1,10 +1,10 @@
 import { ButtonGroup, Button, IconButton } from '@mui/material';
 import { WaterOutlined } from '@mui/icons-material';
-import { solfeggio_FREQ } from '../constants';
+import { SOLFEGGIO_FREQ } from '../constants';
 
 interface Props {
-  solfeggio: keyof typeof solfeggio_FREQ;
-  setSolfeggio: (value: keyof typeof solfeggio_FREQ) => void;
+  solfeggio: keyof typeof SOLFEGGIO_FREQ;
+  setSolfeggio: (value: keyof typeof SOLFEGGIO_FREQ) => void;
 }
 
 export function SolfeggioControls({ solfeggio, setSolfeggio }: Props) {
@@ -20,10 +20,10 @@ export function SolfeggioControls({ solfeggio, setSolfeggio }: Props) {
         variant="contained"
         sx={{ '& .MuiButton-root': { marginBottom: '8px' } }}
       >
-        {Object.entries(solfeggio_FREQ).map(([key]) => (
+        {Object.entries(SOLFEGGIO_FREQ).map(([key]) => (
           <Button
             key={key}
-            onClick={() => setSolfeggio(key as keyof typeof solfeggio_FREQ)}
+            onClick={() => setSolfeggio(key as keyof typeof SOLFEGGIO_FREQ)}
             variant={solfeggio === key ? 'contained' : 'outlined'}
             color="primary"
           >
