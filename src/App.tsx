@@ -10,6 +10,7 @@ import { useSynths } from './hooks/useSynths';
 import { useAudioState } from './hooks/useAudioState';
 import brainwavesLogo from './assets/brainwaves.svg'
 import { SOLFEGGIO_FREQ, BINAURAL_FREQ } from './constants';
+import { FrequencyCanvas } from './components/FrequencyCanvas';
 declare global {
   interface Window { synthLeft: any; synthRight: any; synthNoise: any; harmonic: any; harmonicLFO: any; }
 }
@@ -33,7 +34,8 @@ function App() {
     synthRight,
     synthNoise,
     harmonic,
-    harmonicLFO
+    harmonicLFO,
+    initializeSynths
   } = useSynths();
 
   const {
@@ -52,8 +54,29 @@ function App() {
     randomizeBeat,
     setSolfeggio,
     setBinaural,
-    setNoiseType
-  } = useAudioState({ synthLeft, synthRight, synthNoise, harmonic, harmonicLFO });
+    setNoiseType,
+    setLeftOptions,
+    setRightOptions,
+    updateSynthFrequency,
+    isInitialized
+  } = useAudioState({ 
+    synthLeft, 
+    synthRight, 
+    synthNoise, 
+    harmonic, 
+    harmonicLFO,
+    initializeSynths 
+  });
+
+  const handleFrequencyChange = (leftFreq: number, rightFreq: number) => {
+    if (!synthLeft.current || !synthRight.current ) return;
+    
+    console.log('handleFrequencyChange', leftFreq, rightFreq);
+    setLeftOptions({ frequency: leftFreq, pan: -1 });
+    setRightOptions({ frequency: rightFreq, pan: 1 });
+    updateSynthFrequency(synthLeft.current, { frequency: leftFreq });
+    updateSynthFrequency(synthRight.current, { frequency: rightFreq });
+  };
 
   return (
     <>
@@ -63,6 +86,12 @@ function App() {
         </IconButton>
       </div>
       <div className="card">
+        <FrequencyCanvas 
+          solfeggioFreq={SOLFEGGIO_FREQ[solfeggio]}
+          binauralFreqMin={BINAURAL_FREQ[binaural].min}
+          binauralFreqMax={BINAURAL_FREQ[binaural].max}
+          onFrequencyChange={handleFrequencyChange}
+        />
         <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center' }}>
           <SolfeggioControls 
             solfeggio={solfeggio} 

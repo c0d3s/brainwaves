@@ -24,6 +24,7 @@ export function useAudioState({ synthLeft, synthRight, synthNoise, harmonic, har
   const [isInitialized, setIsInitialized] = useState(false);
 
   const updateSynthFrequency = (synth: Tone.Synth, options: { frequency: number }) => {
+    console.log('updateSynthFrequency', synth, options.frequency);
     synth.frequency.linearRampTo(options.frequency, 1);
   };
 
@@ -110,6 +111,9 @@ export function useAudioState({ synthLeft, synthRight, synthNoise, harmonic, har
     randomizeBeat,
     setSolfeggio,
     setBinaural,
-    setNoiseType
+    setNoiseType,
+    setLeftOptions,
+    setRightOptions,
+    updateSynthFrequency
   };
 } 
