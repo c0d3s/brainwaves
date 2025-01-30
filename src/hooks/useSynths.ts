@@ -2,19 +2,14 @@ import { useRef } from 'react';
 import * as Tone from 'tone';
 
 export function useSynths() {
-  const synthLeft = useRef(new Tone.Synth({
-    oscillator: {
-      type: "sine",
-      volume: -20,
-    }
+  const synthLeft = useRef(new Tone.Oscillator({
+    type: "sine",
+    volume: -20,
   }).connect(new Tone.Panner(-1).toDestination()));
 
-  const synthRight = useRef(new Tone.Synth({
-    oscillator: {
-      type: "sine",
-      volume: -20,
-    },
-    portamento: 10,
+  const synthRight = useRef(new Tone.Oscillator({
+    type: "sine",
+    volume: -20,
   }).connect(new Tone.Panner(1).toDestination()));
 
   const synthNoise = useRef(new Tone.Noise({
@@ -34,11 +29,16 @@ export function useSynths() {
     max: 20
   }).connect(harmonic.current.frequency));
 
+  const updateFrequency = (osc: Tone.Oscillator, newFreq: number) => {
+    osc.frequency.exponentialRampTo(newFreq, 0.1);
+  };
+
   return {
     synthLeft,
     synthRight,
     synthNoise,
     harmonic,
-    harmonicLFO
+    harmonicLFO,
+    updateFrequency
   };
 } 

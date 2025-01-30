@@ -25,49 +25,29 @@ function App() {
     synthNoise,
     harmonic,
     harmonicLFO,
-    initializeSynths
+    updateFrequency
   } = useSynths();
 
-  const {
-    isPlaying,
-    solfeggio,
-    binaural,
-    noiseType,
-    beat,
-    leftOptions,
-    rightOptions,
-    harmonicOptions,
-    updateLeftFrequency,
-    updateRightFrequency,
-    updateNoise,
-    playTone,
-    randomizeBeat,
-    setSolfeggio,
-    setBinaural,
-    setNoiseType,
-    setLeftOptions,
-    setRightOptions,
-    updateSynthFrequency,
-    isInitialized
-  } = useAudioState({ 
-    synthLeft, 
-    synthRight, 
-    synthNoise, 
-    harmonic, 
+  const audioState = useAudioState({
+    synthLeft,
+    synthRight,
+    synthNoise,
+    harmonic,
     harmonicLFO,
-    initializeSynths 
+    updateFrequency
   });
 
   const handleFrequencyChange = (leftFreq: number, rightFreq: number) => {
     if (!synthLeft.current || !synthRight.current ) return;
     
     console.log('handleFrequencyChange', leftFreq, rightFreq);
-    setLeftOptions({ frequency: leftFreq, pan: -1 });
-    setRightOptions({ frequency: rightFreq, pan: 1 });
-    updateSynthFrequency(synthLeft.current, { frequency: leftFreq });
-    updateSynthFrequency(synthRight.current, { frequency: rightFreq });
+    audioState.setLeftOptions({ frequency: leftFreq, pan: -1 });
+    audioState.setRightOptions({ frequency: rightFreq, pan: 1 });
+    audioState.updateSynthFrequency(synthLeft.current, { frequency: leftFreq });
+    audioState.updateSynthFrequency(synthRight.current, { frequency: rightFreq });
   };
 
+  console.log(audioState.beat)
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -78,29 +58,29 @@ function App() {
       </div>
       <div className="card">
         <PlayControls 
-          isPlaying={isPlaying}
-          beat={beat}
-          onPlay={playTone}
-          onRandomize={randomizeBeat}
+          isPlaying={audioState.isPlaying}
+          beat={audioState.beat}
+          onPlay={audioState.playTone}
+          onRandomize={audioState.randomizeBeat}
         />
         <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center' }}>
           <SolfeggioControls 
-            solfeggio={solfeggio} 
-            setSolfeggio={setSolfeggio} 
+            solfeggio={audioState.solfeggio} 
+            setSolfeggio={audioState.setSolfeggio} 
           />
           <BinauralControls 
-            binaural={binaural} 
-            setBinaural={setBinaural} 
+            binaural={audioState.binaural} 
+            setBinaural={audioState.setBinaural} 
           />
           <NoiseControls 
-            noiseType={noiseType} 
-            setNoiseType={setNoiseType} 
+            noiseType={audioState.noiseType} 
+            setNoiseType={audioState.setNoiseType} 
           />
         </div>
         <FrequencyCanvas 
-          solfeggioFreq={SOLFEGGIO_FREQ[solfeggio]}
-          binauralFreqMin={BINAURAL_FREQ[binaural].min}
-          binauralFreqMax={BINAURAL_FREQ[binaural].max}
+          solfeggioFreq={SOLFEGGIO_FREQ[audioState.solfeggio]}
+          binauralFreqMin={BINAURAL_FREQ[audioState.binaural].min}
+          binauralFreqMax={BINAURAL_FREQ[audioState.binaural].max}
           onFrequencyChange={handleFrequencyChange}
         />
       </div>

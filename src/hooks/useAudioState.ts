@@ -4,14 +4,15 @@ import { calcFreq, calcRandomBeat } from '../utils';
 import { BINAURAL_FREQ, SOLFEGGIO_FREQ } from '../constants';
 
 interface SynthRefs {
-  synthLeft: React.RefObject<Tone.Synth>;
-  synthRight: React.RefObject<Tone.Synth>;
+  synthLeft: React.RefObject<Tone.Oscillator>;
+  synthRight: React.RefObject<Tone.Oscillator>;
   synthNoise: React.RefObject<Tone.Noise>;
   harmonic: React.RefObject<Tone.Oscillator>;
   harmonicLFO: React.RefObject<Tone.LFO>;
+  updateFrequency: (osc: Tone.Oscillator, freq: number) => void;
 }
 
-export function useAudioState({ synthLeft, synthRight, synthNoise, harmonic, harmonicLFO }: SynthRefs) {
+export function useAudioState({ synthLeft, synthRight, synthNoise, harmonic, harmonicLFO, updateFrequency }: SynthRefs) {
   // State declarations
   const [isPlaying, setIsPlaying] = useState(false);
   const [solfeggio, setSolfeggio] = useState<keyof typeof SOLFEGGIO_FREQ>('ut');
@@ -37,40 +38,50 @@ export function useAudioState({ synthLeft, synthRight, synthNoise, harmonic, har
   const updateLeftFrequency = () => {
     const leftFreq = calcFreq('left', solfeggio, binaural);
     setLeftOptions({ frequency: leftFreq, pan: -1 });
-    updateSynthFrequency(synthLeft.current!, { frequency: leftFreq });
-    updateHarmonicFrequency();
+    updateFrequency(synthLeft.current!, leftFreq);
   };
 
   const updateRightFrequency = () => {
     const rightFreq = calcFreq('right', solfeggio, binaural);
     setRightOptions({ frequency: rightFreq, pan: 1 });
-    updateSynthFrequency(synthRight.current!, { frequency: rightFreq });
+    updateFrequency(synthRight.current!, rightFreq);
   };
 
   const updateNoise = () => {
     if (synthNoise.current) {
+      // Stop the noise if it's playing
+      if (isPlaying) {
+        synthNoise.current.stop();
+      }
+      
+      // Update the noise type
       synthNoise.current.type = noiseType === 'off' ? 'white' : noiseType;
+      
+      // Restart the noise if it was playing and not set to 'off'
+      if (isPlaying && noiseType !== 'off') {
+        synthNoise.current.start();
+      }
     }
   };
 
   const randomizeBeat = () => {
-    const newBeat = calcRandomBeat();
+    const newBeat = calcRandomBeat(binaural);
     setBeat(newBeat);
     const rightFreq = leftOptions.frequency + newBeat;
     setRightOptions({ frequency: rightFreq, pan: 1 });
-    updateSynthFrequency(synthRight.current, { frequency: rightFreq });
+    updateFrequency(synthRight.current!, rightFreq);
   };
 
   const playTone = async () => {
     if (!isPlaying) {
-      synthLeft.current?.triggerAttack(leftOptions.frequency);
-      synthRight.current?.triggerAttack(rightOptions.frequency);
-      harmonic.current?.start('+0', harmonicOptions.frequency);
+      synthLeft.current?.start();
+      synthRight.current?.start();
+      harmonic.current?.start();
       harmonicLFO.current?.start();
       if (noiseType !== 'off') synthNoise.current?.start();
     } else {
-      synthLeft.current?.triggerRelease();
-      synthRight.current?.triggerRelease();
+      synthLeft.current?.stop();
+      synthRight.current?.stop();
       harmonic.current?.stop();
       harmonicLFO.current?.stop();
       synthNoise.current?.stop();

@@ -108,10 +108,11 @@ export function FrequencyCanvas({ solfeggioFreq, binauralFreqMin, binauralFreqMa
       width={400}
       height={400}
       style={{
-        border: '1px solid #333',
-        borderRadius: '4px',
+        border: '4px solid rgb(156, 39, 176)',
+        borderRadius: '16   px',
         background: '#2a2a2a',
-        cursor: 'crosshair'
+        cursor: 'crosshair',
+        marginTop: '1rem',
       }}
       onMouseMove={handleMouseMove}
       onMouseDown={handleMouseDown}
