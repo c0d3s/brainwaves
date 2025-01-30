@@ -4,11 +4,20 @@ export const calcFreq = (
   side: "left" | "right",
   solfeggio: keyof typeof SOLFEGGIO_FREQ,
   binaural: keyof typeof BINAURAL_FREQ,
+  randomBeat: boolean = false,
   beat?: number,
 ) => {
   const solfeggioFreq = SOLFEGGIO_FREQ[solfeggio];
   if (side === "left") return solfeggioFreq;
-  return (beat || calcRandomBeat(binaural)) + solfeggioFreq;
+  return (
+    beat ||
+    (randomBeat ? calcRandomBeat(binaural) : calcCenterBeat(binaural))
+  ) + solfeggioFreq;
+};
+
+export const calcCenterBeat = (binaural: keyof typeof BINAURAL_FREQ) => {
+  const binauralFreq = BINAURAL_FREQ[binaural];
+  return (binauralFreq.min + binauralFreq.max) / 2;
 };
 
 export const calcRandomBeat = (binaural: keyof typeof BINAURAL_FREQ) => {

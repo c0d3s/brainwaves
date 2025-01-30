@@ -1,11 +1,15 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 import debounce from "lodash/debounce";
+import { IconButton } from '@mui/material';
+import { TuneOutlined } from '@mui/icons-material';
 
 interface Props {
   solfeggioFreq: number;
   binauralFreqMin: number;
   binauralFreqMax: number;
   onFrequencyChange: (leftFreq: number, rightFreq: number) => void;
+  leftFreq?: number;
+  beat?: number;
 }
 
 export function FrequencyCanvas({
@@ -13,6 +17,8 @@ export function FrequencyCanvas({
   binauralFreqMin,
   binauralFreqMax,
   onFrequencyChange,
+  leftFreq = 0,
+  beat = 0,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isMouseDown, setIsMouseDown] = useState(false);
@@ -20,8 +26,8 @@ export function FrequencyCanvas({
   const [point, setPoint] = useState<{ x: number; y: number } | null>(null);
 
   // Calculate frequency ranges
-  const yMin = solfeggioFreq * 0.5; // Half of base frequency
-  const yMax = solfeggioFreq * 1.5; // 1.5x base frequency
+  const yMin = solfeggioFreq * 0.75;
+  const yMax = solfeggioFreq * 1.5; 
   const xMin = binauralFreqMin; // Lowest binaural frequency
   const xMax = binauralFreqMax; // Highest binaural frequency
 
@@ -171,21 +177,52 @@ export function FrequencyCanvas({
   }, [currentPosition, isMouseDown, point]);
 
   return (
-    <canvas
-      ref={canvasRef}
-      width={400}
-      height={400}
-      style={{
-        border: "4px solid rgb(156, 39, 176)",
-        borderRadius: "16   px",
-        background: "#2a2a2a",
-        cursor: "crosshair",
-        marginTop: "1rem",
-      }}
-      onMouseMove={handleMouseMove}
-      onMouseDown={handleMouseDown}
-      onMouseUp={handleMouseUp}
-      onMouseLeave={handleMouseUp}
-    />
+    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+      <IconButton color="secondary">
+        <TuneOutlined />
+      </IconButton>
+      
+      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
+        <div style={{ 
+          writingMode: 'vertical-rl', 
+          transform: 'rotate(180deg)', 
+          textAlign: 'center',
+          color: 'rgba(255, 255, 255, 0.7)',
+          minWidth: '100px'
+        }}>
+          Base Frequency
+          <div style={{ marginTop: '8px', color: '#fff' }}>
+            {leftFreq.toFixed(2)} Hz
+          </div>
+        </div>
+
+        <canvas
+          ref={canvasRef}
+          width={400}
+          height={400}
+          style={{
+            border: '1px solid #333',
+            borderRadius: '4px',
+            background: '#2a2a2a',
+            cursor: 'crosshair'
+          }}
+          onMouseMove={handleMouseMove}
+          onMouseDown={handleMouseDown}
+          onMouseUp={handleMouseUp}
+          onMouseLeave={handleMouseUp}
+        />
+      </div>
+
+      <div style={{ 
+        textAlign: 'center',
+        color: 'rgba(255, 255, 255, 0.7)',
+        minHeight: '50px'
+      }}>
+        Binaural Beat
+        <div style={{ marginTop: '4px', color: '#fff' }}>
+          {beat.toFixed(2)} Hz
+        </div>
+      </div>
+    </div>
   );
 }
