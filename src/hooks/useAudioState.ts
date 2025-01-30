@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import * as Tone from "tone";
 import { calcFreq, calcRandomBeat } from "../utils";
 import { BINAURAL_FREQ, SOLFEGGIO_FREQ } from "../constants";
@@ -64,21 +64,28 @@ export function useAudioState({
   };
 
   const updateNoise = () => {
-    if (synthNoise.current) {
-      // Stop the noise if it's playing
-      if (isPlaying) {
-        synthNoise.current.stop();
-      }
+    if (!synthNoise.current) return;
 
-      // Update the noise type
+    try {
+      // Always stop first to prevent overlapping
+      synthNoise.current.stop();
+
+      // Update type
       synthNoise.current.type = noiseType === "off" ? "white" : noiseType;
 
-      // Restart the noise if it was playing and not set to 'off'
+      // Start if playing and not off
       if (isPlaying && noiseType !== "off") {
         synthNoise.current.start();
       }
+    } catch (error) {
+      console.error("Error updating noise:", error);
     }
   };
+
+  // Effect to handle noise updates
+  useEffect(() => {
+    updateNoise();
+  }, [noiseType, isPlaying]);
 
   const randomizeBeat = () => {
     const newBeat = calcRandomBeat(binaural);
@@ -108,10 +115,6 @@ export function useAudioState({
   useEffect(() => {
     updateLeftFrequency();
   }, [solfeggio]);
-
-  useEffect(() => {
-    updateNoise();
-  }, [noiseType]);
 
   useEffect(() => {
     updateHarmonicFrequency();
