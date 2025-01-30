@@ -1,7 +1,7 @@
-import { ButtonGroup, Button, IconButton } from '@mui/material';
-import { AirOutlined } from '@mui/icons-material';
+import { ButtonGroup, Button, IconButton } from "@mui/material";
+import { AirOutlined } from "@mui/icons-material";
 
-type NoiseType = 'white' | 'pink' | 'brown' | 'off';
+type NoiseType = "white" | "pink" | "brown" | "off";
 
 interface Props {
   noiseType: NoiseType;
@@ -16,26 +16,26 @@ export function NoiseControls({ noiseType, setNoiseType }: Props) {
           <AirOutlined />
         </IconButton>
       </div>
-      <ButtonGroup 
-        orientation="vertical" 
+      <ButtonGroup
+        orientation="vertical"
         variant="contained"
-        sx={{ 
-            '& .MuiButton-root': { 
-              marginBottom: '8px',
-              borderColor: 'primary.main',
-              '&:last-child': {
-                marginBottom: 0,
-                borderColor: 'primary.main',
-              }
-            }
-          }}
-        >
-        {['off', 'white', 'pink', 'brown'].map((type) => (
+        sx={{
+          "& .MuiButton-root": {
+            marginBottom: "8px",
+            borderColor: "primary.main",
+            "&:last-child": {
+              marginBottom: 0,
+              borderColor: "primary.main",
+            },
+          },
+        }}
+      >
+        {["off", "white", "pink", "brown"].map((type) => (
           <Button
             key={type}
             onClick={() => setNoiseType(type as NoiseType)}
-            variant={noiseType === type ? 'contained' : 'outlined'}
-            color={noiseType === type ? 'primary' : 'secondary'}
+            variant={noiseType === type ? "contained" : "outlined"}
+            color={noiseType === type ? "primary" : "secondary"}
           >
             {type.charAt(0).toUpperCase() + type.slice(1)}
           </Button>
@@ -43,4 +43,4 @@ export function NoiseControls({ noiseType, setNoiseType }: Props) {
       </ButtonGroup>
     </div>
   );
-} 
+}

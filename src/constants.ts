@@ -31,4 +31,4 @@ export const SOLFEGGIO_FREQ = {
   sol: 741,
   la: 852,
   universe: 963,
-} as const; 
+} as const;

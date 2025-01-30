@@ -1,21 +1,27 @@
-import { useState, useRef } from 'react'
-import './App.css'
-import * as Tone from 'tone';
-import { IconButton } from '@mui/material';
-import { SolfeggioControls } from './components/SolfeggioControls';
-import { BinauralControls } from './components/BinauralControls';
-import { NoiseControls } from './components/NoiseControls';
-import { PlayControls } from './components/PlayControls';
-import { useSynths } from './hooks/useSynths';
-import { useAudioState } from './hooks/useAudioState';
-import brainwavesLogo from './assets/brainwaves.svg'
-import { SOLFEGGIO_FREQ, BINAURAL_FREQ } from './constants';
-import { FrequencyCanvas } from './components/FrequencyCanvas';
-import { ThemeProvider } from '@mui/material/styles';
-import CssBaseline from '@mui/material/CssBaseline';
-import { theme } from './theme';
+import { useState, useRef } from "react";
+import "./App.css";
+import * as Tone from "tone";
+import { IconButton } from "@mui/material";
+import { SolfeggioControls } from "./components/SolfeggioControls";
+import { BinauralControls } from "./components/BinauralControls";
+import { NoiseControls } from "./components/NoiseControls";
+import { PlayControls } from "./components/PlayControls";
+import { useSynths } from "./hooks/useSynths";
+import { useAudioState } from "./hooks/useAudioState";
+import brainwavesLogo from "./assets/brainwaves.svg";
+import { SOLFEGGIO_FREQ, BINAURAL_FREQ } from "./constants";
+import { FrequencyCanvas } from "./components/FrequencyCanvas";
+import { ThemeProvider } from "@mui/material/styles";
+import CssBaseline from "@mui/material/CssBaseline";
+import { theme } from "./theme";
 declare global {
-  interface Window { synthLeft: any; synthRight: any; synthNoise: any; harmonic: any; harmonicLFO: any; }
+  interface Window {
+    synthLeft: any;
+    synthRight: any;
+    synthNoise: any;
+    harmonic: any;
+    harmonicLFO: any;
+  }
 }
 
 function App() {
@@ -25,7 +31,7 @@ function App() {
     synthNoise,
     harmonic,
     harmonicLFO,
-    updateFrequency
+    updateFrequency,
   } = useSynths();
 
   const audioState = useAudioState({
@@ -34,20 +40,22 @@ function App() {
     synthNoise,
     harmonic,
     harmonicLFO,
-    updateFrequency
+    updateFrequency,
   });
 
   const handleFrequencyChange = (leftFreq: number, rightFreq: number) => {
-    if (!synthLeft.current || !synthRight.current ) return;
-    
-    console.log('handleFrequencyChange', leftFreq, rightFreq);
+    if (!synthLeft.current || !synthRight.current) return;
+
+    console.log("handleFrequencyChange", leftFreq, rightFreq);
     audioState.setLeftOptions({ frequency: leftFreq, pan: -1 });
     audioState.setRightOptions({ frequency: rightFreq, pan: 1 });
     audioState.updateSynthFrequency(synthLeft.current, { frequency: leftFreq });
-    audioState.updateSynthFrequency(synthRight.current, { frequency: rightFreq });
+    audioState.updateSynthFrequency(synthRight.current, {
+      frequency: rightFreq,
+    });
   };
 
-  console.log(audioState.beat)
+  console.log(audioState.beat);
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
@@ -57,27 +65,27 @@ function App() {
         </IconButton>
       </div>
       <div className="card">
-        <PlayControls 
+        <PlayControls
           isPlaying={audioState.isPlaying}
           beat={audioState.beat}
           onPlay={audioState.playTone}
           onRandomize={audioState.randomizeBeat}
         />
-        <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center' }}>
-          <SolfeggioControls 
-            solfeggio={audioState.solfeggio} 
-            setSolfeggio={audioState.setSolfeggio} 
+        <div style={{ display: "flex", gap: "2rem", justifyContent: "center" }}>
+          <SolfeggioControls
+            solfeggio={audioState.solfeggio}
+            setSolfeggio={audioState.setSolfeggio}
           />
-          <BinauralControls 
-            binaural={audioState.binaural} 
-            setBinaural={audioState.setBinaural} 
+          <BinauralControls
+            binaural={audioState.binaural}
+            setBinaural={audioState.setBinaural}
           />
-          <NoiseControls 
-            noiseType={audioState.noiseType} 
-            setNoiseType={audioState.setNoiseType} 
+          <NoiseControls
+            noiseType={audioState.noiseType}
+            setNoiseType={audioState.setNoiseType}
           />
         </div>
-        <FrequencyCanvas 
+        <FrequencyCanvas
           solfeggioFreq={SOLFEGGIO_FREQ[audioState.solfeggio]}
           binauralFreqMin={BINAURAL_FREQ[audioState.binaural].min}
           binauralFreqMax={BINAURAL_FREQ[audioState.binaural].max}
@@ -85,7 +93,7 @@ function App() {
         />
       </div>
     </ThemeProvider>
-  )
+  );
 }
 
-export default App
+export default App;

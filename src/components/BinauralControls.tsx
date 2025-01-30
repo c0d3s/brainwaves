@@ -1,6 +1,6 @@
-import { ButtonGroup, Button, IconButton } from '@mui/material';
-import { GraphicEqOutlined } from '@mui/icons-material';
-import { BINAURAL_FREQ } from '../constants';
+import { ButtonGroup, Button, IconButton } from "@mui/material";
+import { GraphicEqOutlined } from "@mui/icons-material";
+import { BINAURAL_FREQ } from "../constants";
 
 interface Props {
   binaural: keyof typeof BINAURAL_FREQ;
@@ -15,25 +15,26 @@ export function BinauralControls({ binaural, setBinaural }: Props) {
           <GraphicEqOutlined />
         </IconButton>
       </div>
-      <ButtonGroup 
-        orientation="vertical" 
+      <ButtonGroup
+        orientation="vertical"
         variant="contained"
-        sx={{ 
-            '& .MuiButton-root': { 
-              marginBottom: '8px',
-              borderColor: 'primary.main',
-              '&:last-child': {
-                marginBottom: 0,
-                borderColor: 'primary.main',
-              }
-            }
-          }}      >
+        sx={{
+          "& .MuiButton-root": {
+            marginBottom: "8px",
+            borderColor: "primary.main",
+            "&:last-child": {
+              marginBottom: 0,
+              borderColor: "primary.main",
+            },
+          },
+        }}
+      >
         {Object.keys(BINAURAL_FREQ).map((key) => (
           <Button
             key={key}
             onClick={() => setBinaural(key as keyof typeof BINAURAL_FREQ)}
-            variant={binaural === key ? 'contained' : 'outlined'}
-            color={binaural === key ? "primary" : "secondary"}  
+            variant={binaural === key ? "contained" : "outlined"}
+            color={binaural === key ? "primary" : "secondary"}
           >
             {key.charAt(0).toUpperCase() + key.slice(1)}
           </Button>
@@ -41,4 +42,4 @@ export function BinauralControls({ binaural, setBinaural }: Props) {
       </ButtonGroup>
     </div>
   );
-} 
+}

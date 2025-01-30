@@ -1,5 +1,5 @@
-import { useRef, useEffect, useState, useCallback } from 'react';
-import debounce from 'lodash/debounce';
+import { useRef, useEffect, useState, useCallback } from "react";
+import debounce from "lodash/debounce";
 
 interface Props {
   solfeggioFreq: number;
@@ -8,24 +8,29 @@ interface Props {
   onFrequencyChange: (leftFreq: number, rightFreq: number) => void;
 }
 
-export function FrequencyCanvas({ solfeggioFreq, binauralFreqMin, binauralFreqMax, onFrequencyChange }: Props) {
+export function FrequencyCanvas({
+  solfeggioFreq,
+  binauralFreqMin,
+  binauralFreqMax,
+  onFrequencyChange,
+}: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isMouseDown, setIsMouseDown] = useState(false);
   const [currentPosition, setCurrentPosition] = useState({ x: 200, y: 200 }); // Center of 400x400 canvas
   const [point, setPoint] = useState<{ x: number; y: number } | null>(null);
 
   // Calculate frequency ranges
-  const yMin = solfeggioFreq * 0.5;  // Half of base frequency
-  const yMax = solfeggioFreq * 1.5;  // 1.5x base frequency
-  const xMin = binauralFreqMin;  // Lowest binaural frequency
-  const xMax = binauralFreqMax;  // Highest binaural frequency
+  const yMin = solfeggioFreq * 0.5; // Half of base frequency
+  const yMax = solfeggioFreq * 1.5; // 1.5x base frequency
+  const xMin = binauralFreqMin; // Lowest binaural frequency
+  const xMax = binauralFreqMax; // Highest binaural frequency
 
   // Create a debounced version of onFrequencyChange
   const debouncedFrequencyChange = useCallback(
     debounce((leftFreq: number, rightFreq: number) => {
       onFrequencyChange(leftFreq, rightFreq);
     }, 100),
-    [onFrequencyChange]
+    [onFrequencyChange],
   );
 
   const calculateFrequencies = (x: number, y: number) => {
@@ -59,7 +64,10 @@ export function FrequencyCanvas({ solfeggioFreq, binauralFreqMin, binauralFreqMa
 
   const handleMouseDown = () => {
     setIsMouseDown(true);
-    const frequencies = calculateFrequencies(currentPosition.x, currentPosition.y);
+    const frequencies = calculateFrequencies(
+      currentPosition.x,
+      currentPosition.y,
+    );
     if (frequencies) {
       debouncedFrequencyChange(frequencies.leftFreq, frequencies.rightFreq);
       setPoint(currentPosition);
@@ -80,7 +88,10 @@ export function FrequencyCanvas({ solfeggioFreq, binauralFreqMin, binauralFreqMa
   // Initialize point in center
   useEffect(() => {
     if (!point && canvasRef.current) {
-      const centerPoint = { x: canvasRef.current.width / 2, y: canvasRef.current.height / 2 };
+      const centerPoint = {
+        x: canvasRef.current.width / 2,
+        y: canvasRef.current.height / 2,
+      };
       setPoint(centerPoint);
       const frequencies = calculateFrequencies(centerPoint.x, centerPoint.y);
       if (frequencies) {
@@ -92,9 +103,9 @@ export function FrequencyCanvas({ solfeggioFreq, binauralFreqMin, binauralFreqMa
   // Reset Y position when solfeggio changes
   useEffect(() => {
     if (point && canvasRef.current) {
-      const newPoint = { 
-        x: point.x, 
-        y: canvasRef.current.height / 2 
+      const newPoint = {
+        x: point.x,
+        y: canvasRef.current.height / 2,
       };
       setPoint(newPoint);
       const frequencies = calculateFrequencies(newPoint.x, newPoint.y);
@@ -107,9 +118,9 @@ export function FrequencyCanvas({ solfeggioFreq, binauralFreqMin, binauralFreqMa
   // Reset X position when binaural range changes
   useEffect(() => {
     if (point && canvasRef.current) {
-      const newPoint = { 
-        x: canvasRef.current.width / 2, 
-        y: point.y 
+      const newPoint = {
+        x: canvasRef.current.width / 2,
+        y: point.y,
       };
       setPoint(newPoint);
       const frequencies = calculateFrequencies(newPoint.x, newPoint.y);
@@ -124,16 +135,21 @@ export function FrequencyCanvas({ solfeggioFreq, binauralFreqMin, binauralFreqMa
     const canvas = canvasRef.current;
     if (!canvas) return;
 
-    const ctx = canvas.getContext('2d');
+    const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
     // Clear canvas
     ctx.clearRect(0, 0, canvas.width, canvas.height);
 
     // Draw gradient background
-    const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
-    gradient.addColorStop(0, '#1a1a1a');
-    gradient.addColorStop(1, '#4a4a4a');
+    const gradient = ctx.createLinearGradient(
+      0,
+      0,
+      canvas.width,
+      canvas.height,
+    );
+    gradient.addColorStop(0, "#1a1a1a");
+    gradient.addColorStop(1, "#4a4a4a");
     ctx.fillStyle = gradient;
     ctx.fillRect(0, 0, canvas.width, canvas.height);
 
@@ -141,7 +157,7 @@ export function FrequencyCanvas({ solfeggioFreq, binauralFreqMin, binauralFreqMa
     if (isMouseDown) {
       ctx.beginPath();
       ctx.arc(currentPosition.x, currentPosition.y, 5, 0, 2 * Math.PI);
-      ctx.fillStyle = '#00ff00';
+      ctx.fillStyle = "#00ff00";
       ctx.fill();
     }
 
@@ -149,7 +165,7 @@ export function FrequencyCanvas({ solfeggioFreq, binauralFreqMin, binauralFreqMa
     if (point) {
       ctx.beginPath();
       ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
-      ctx.fillStyle = '#00ff00';
+      ctx.fillStyle = "#00ff00";
       ctx.fill();
     }
   }, [currentPosition, isMouseDown, point]);
@@ -160,11 +176,11 @@ export function FrequencyCanvas({ solfeggioFreq, binauralFreqMin, binauralFreqMa
       width={400}
       height={400}
       style={{
-        border: '4px solid rgb(156, 39, 176)',
-        borderRadius: '16   px',
-        background: '#2a2a2a',
-        cursor: 'crosshair',
-        marginTop: '1rem',
+        border: "4px solid rgb(156, 39, 176)",
+        borderRadius: "16   px",
+        background: "#2a2a2a",
+        cursor: "crosshair",
+        marginTop: "1rem",
       }}
       onMouseMove={handleMouseMove}
       onMouseDown={handleMouseDown}
@@ -172,4 +188,4 @@ export function FrequencyCanvas({ solfeggioFreq, binauralFreqMin, binauralFreqMa
       onMouseLeave={handleMouseUp}
     />
   );
-} 
+}
