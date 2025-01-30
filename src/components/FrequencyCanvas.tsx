@@ -1,5 +1,6 @@
-import { useRef, useEffect, useState } from 'react';
+import { useRef, useEffect, useState, useCallback } from 'react';
 import { BINAURAL_FREQ } from '../constants';
+import debounce from 'lodash/debounce';
 
 interface Props {
   solfeggioFreq: number;
@@ -18,6 +19,14 @@ export function FrequencyCanvas({ solfeggioFreq, binauralFreqMin, binauralFreqMa
   const yMax = solfeggioFreq * 1.5;  // 1.5x base frequency
   const xMin = binauralFreqMin;  // Lowest binaural frequency
   const xMax = binauralFreqMax;  // Highest binaural frequency
+
+  // Create a debounced version of onFrequencyChange
+  const debouncedFrequencyChange = useCallback(
+    debounce((leftFreq: number, rightFreq: number) => {
+      onFrequencyChange(leftFreq, rightFreq);
+    }, 100),
+    [onFrequencyChange]
+  );
 
   const calculateFrequencies = (x: number, y: number) => {
     const canvas = canvasRef.current;
@@ -43,7 +52,7 @@ export function FrequencyCanvas({ solfeggioFreq, binauralFreqMin, binauralFreqMa
     if (isMouseDown) {
       const frequencies = calculateFrequencies(x, y);
       if (frequencies) {
-        onFrequencyChange(frequencies.leftFreq, frequencies.rightFreq);
+        debouncedFrequencyChange(frequencies.leftFreq, frequencies.rightFreq);
       }
     }
   };
@@ -51,15 +60,21 @@ export function FrequencyCanvas({ solfeggioFreq, binauralFreqMin, binauralFreqMa
   const handleMouseDown = () => {
     setIsMouseDown(true);
     const frequencies = calculateFrequencies(currentPosition.x, currentPosition.y);
-    console.log('frequencies', frequencies);
     if (frequencies) {
-      onFrequencyChange(frequencies.leftFreq, frequencies.rightFreq);
+      debouncedFrequencyChange(frequencies.leftFreq, frequencies.rightFreq);
     }
   };
 
   const handleMouseUp = () => {
     setIsMouseDown(false);
   };
+
+  // Clean up the debounced function on unmount
+  useEffect(() => {
+    return () => {
+      debouncedFrequencyChange.cancel();
+    };
+  }, [debouncedFrequencyChange]);
 
   useEffect(() => {
     // Draw canvas
