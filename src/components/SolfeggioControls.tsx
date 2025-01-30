@@ -18,8 +18,16 @@ export function SolfeggioControls({ solfeggio, setSolfeggio }: Props) {
       <ButtonGroup 
         orientation="vertical" 
         variant="contained"
-        sx={{ '& .MuiButton-root': { marginBottom: '8px' } }}
-      >
+        sx={{ 
+            '& .MuiButton-root': { 
+              marginBottom: '8px',
+              borderColor: 'primary.main',
+              '&:last-child': {
+                marginBottom: 0,
+                borderColor: 'primary.main',
+              }
+            }
+          }}      >
         {Object.entries(SOLFEGGIO_FREQ).map(([key]) => (
           <Button
             key={key}
@@ -27,7 +35,7 @@ export function SolfeggioControls({ solfeggio, setSolfeggio }: Props) {
             variant={solfeggio === key ? 'contained' : 'outlined'}
             color={solfeggio === key ? "primary" : "secondary"}
           >
-            {key.charAt(0).toUpperCase() + key.slice(1)}
+            {key.charAt(0).toUpperCase() + key.slice(1).toLowerCase()}
           </Button>
         ))}
       </ButtonGroup>

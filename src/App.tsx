@@ -77,11 +77,11 @@ function App() {
         </IconButton>
       </div>
       <div className="card">
-        <FrequencyCanvas 
-          solfeggioFreq={SOLFEGGIO_FREQ[solfeggio]}
-          binauralFreqMin={BINAURAL_FREQ[binaural].min}
-          binauralFreqMax={BINAURAL_FREQ[binaural].max}
-          onFrequencyChange={handleFrequencyChange}
+        <PlayControls 
+          isPlaying={isPlaying}
+          beat={beat}
+          onPlay={playTone}
+          onRandomize={randomizeBeat}
         />
         <div style={{ display: 'flex', gap: '2rem', justifyContent: 'center' }}>
           <SolfeggioControls 
@@ -97,11 +97,11 @@ function App() {
             setNoiseType={setNoiseType} 
           />
         </div>
-        <PlayControls 
-          isPlaying={isPlaying}
-          beat={beat}
-          onPlay={playTone}
-          onRandomize={randomizeBeat}
+        <FrequencyCanvas 
+          solfeggioFreq={SOLFEGGIO_FREQ[solfeggio]}
+          binauralFreqMin={BINAURAL_FREQ[binaural].min}
+          binauralFreqMax={BINAURAL_FREQ[binaural].max}
+          onFrequencyChange={handleFrequencyChange}
         />
       </div>
     </ThemeProvider>

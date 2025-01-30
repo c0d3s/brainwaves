@@ -18,8 +18,16 @@ export function BinauralControls({ binaural, setBinaural }: Props) {
       <ButtonGroup 
         orientation="vertical" 
         variant="contained"
-        sx={{ '& .MuiButton-root': { marginBottom: '8px' } }}
-      >
+        sx={{ 
+            '& .MuiButton-root': { 
+              marginBottom: '8px',
+              borderColor: 'primary.main',
+              '&:last-child': {
+                marginBottom: 0,
+                borderColor: 'primary.main',
+              }
+            }
+          }}      >
         {Object.keys(BINAURAL_FREQ).map((key) => (
           <Button
             key={key}

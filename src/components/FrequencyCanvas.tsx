@@ -1,5 +1,4 @@
 import { useRef, useEffect, useState, useCallback } from 'react';
-import { BINAURAL_FREQ } from '../constants';
 import debounce from 'lodash/debounce';
 
 interface Props {

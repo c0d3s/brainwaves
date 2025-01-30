@@ -11,7 +11,8 @@ export function PlayControls({ isPlaying, beat, onPlay, onRandomize }: Props) {
   return (
     <div>
       <Button 
-        variant="contained" 
+        variant={isPlaying ? "contained" : "outlined"} 
+        color={isPlaying ?  "primary" : "secondary"}
         onClick={onPlay}
         sx={{ margin: '1rem' }}
       >

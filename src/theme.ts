@@ -34,7 +34,7 @@ export const theme = createTheme({
     },
   },
   typography: {
-    fontFamily: '"Ninja Naruto", Arial, sans-serif',
+    fontFamily: 'Arial, sans-serif',
     h1: {
       color: '#ffffff',
     },
