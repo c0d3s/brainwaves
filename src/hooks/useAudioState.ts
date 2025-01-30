@@ -44,6 +44,7 @@ export function useAudioState({ synthLeft, synthRight, synthNoise, harmonic, har
   const updateRightFrequency = () => {
     const rightFreq = calcFreq('right', solfeggio, binaural);
     setRightOptions({ frequency: rightFreq, pan: 1 });
+    setBeat(rightFreq - leftOptions.frequency);
     updateFrequency(synthRight.current!, rightFreq);
   };
 
@@ -91,7 +92,6 @@ export function useAudioState({ synthLeft, synthRight, synthNoise, harmonic, har
 
   useEffect(() => {
     updateLeftFrequency();
-    updateRightFrequency();
   }, [solfeggio, binaural]);
 
   useEffect(() => {
@@ -100,7 +100,8 @@ export function useAudioState({ synthLeft, synthRight, synthNoise, harmonic, har
 
   useEffect(() => {
     updateHarmonicFrequency();
-  }, [leftOptions.frequency]);
+    updateRightFrequency();
+  }, [leftOptions.frequency, binaural]);
 
   useEffect(() => {
     setIsInitialized(true);
