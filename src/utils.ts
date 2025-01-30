@@ -1,18 +1,14 @@
 import { BINAURAL_FREQ, SOLFEGGIO_FREQ } from './constants';
 
-export function calcFreq(
-  side: 'left' | 'right',
-  solfeggio: keyof typeof SOLFEGGIO_FREQ,
-  binaural: keyof typeof BINAURAL_FREQ
-) {
-  const baseFreq = SOLFEGGIO_FREQ[solfeggio];
-  const binauralFreq = BINAURAL_FREQ[binaural];
-  
-  return side === 'left' 
-    ? baseFreq 
-    : baseFreq + binauralFreq;
-}
+export const calcFreq = (side: 'left' | 'right', solfeggio: keyof typeof SOLFEGGIO_FREQ, binaural: keyof typeof BINAURAL_FREQ, beat?: number) => {
+    const solfeggioFreq = SOLFEGGIO_FREQ[solfeggio];
+    if (side === 'left') return solfeggioFreq;
+    return (beat || calcRandomBeat(binaural)) + solfeggioFreq;
+  }
 
-export function calcRandomBeat() {
-  return Math.random() * 40; // Random beat between 0 and 40 Hz
-} 
+export const calcRandomBeat = (binaural: keyof typeof BINAURAL_FREQ) => {
+    const binauralFreq = BINAURAL_FREQ[binaural];
+    const min = binauralFreq.min;
+    const max = binauralFreq.max;
+    return Math.floor(Math.random() * (max - min + 1)) + min;
+}
