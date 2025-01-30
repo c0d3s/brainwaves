@@ -9,44 +9,9 @@ import { PlayControls } from './components/PlayControls';
 import { useSynths } from './hooks/useSynths';
 import { useAudioState } from './hooks/useAudioState';
 import brainwavesLogo from './assets/brainwaves.svg'
-
+import { SOLFEGGIO_FREQ, BINAURAL_FREQ } from './constants';
 declare global {
   interface Window { synthLeft: any; synthRight: any; synthNoise: any; harmonic: any; harmonicLFO: any; }
-}
-
-const SOLFEGGIO_FREQ = {
-  foundation: 174,
-  healing: 285,
-  ut: 396,
-  re: 417,
-  mi: 528,
-  fa: 639,
-  sol: 741,
-  la: 852,
-  universe: 963,
-}
-
-const BINAURAL_FREQ = {
-  delta: {
-    min: 0.5,
-    max: 4,
-  },
-  theta: {
-    min: 4,
-    max: 8,
-  },
-  alpha: {
-    min: 8,
-    max: 13,
-  },
-  beta: {
-    min: 13,
-    max: 30,
-  },
-  gamma: {
-    min: 25,
-    max: 34.75,
-  },
 }
 
 const calcRandomBeat = (binaural: keyof typeof BINAURAL_FREQ) => {

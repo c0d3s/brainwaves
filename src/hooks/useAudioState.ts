@@ -21,6 +21,7 @@ export function useAudioState({ synthLeft, synthRight, synthNoise, harmonic, har
   const [leftOptions, setLeftOptions] = useState({ frequency: 0, pan: -1 });
   const [rightOptions, setRightOptions] = useState({ frequency: 0, pan: 1 });
   const [harmonicOptions, setHarmonicOptions] = useState({ frequency: 0, pan: 0 });
+  const [isInitialized, setIsInitialized] = useState(false);
 
   const updateSynthFrequency = (synth: Tone.Synth, options: { frequency: number }) => {
     synth.frequency.linearRampTo(options.frequency, 1);
@@ -56,7 +57,7 @@ export function useAudioState({ synthLeft, synthRight, synthNoise, harmonic, har
     setBeat(newBeat);
     const rightFreq = leftOptions.frequency + newBeat;
     setRightOptions({ frequency: rightFreq, pan: 1 });
-    updateSynthFrequency(synthRight.current!, { frequency: rightFreq });
+    updateSynthFrequency(synthRight.current, { frequency: rightFreq });
   };
 
   const playTone = async () => {
@@ -88,6 +89,10 @@ export function useAudioState({ synthLeft, synthRight, synthNoise, harmonic, har
   useEffect(() => {
     updateHarmonicFrequency();
   }, [leftOptions.frequency]);
+
+  useEffect(() => {
+    setIsInitialized(true);
+  }, []);
 
   return {
     isPlaying,
