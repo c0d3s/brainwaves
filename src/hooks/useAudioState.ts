@@ -92,7 +92,7 @@ export function useAudioState({ synthLeft, synthRight, synthNoise, harmonic, har
 
   useEffect(() => {
     updateLeftFrequency();
-  }, [solfeggio, binaural]);
+  }, [solfeggio]);
 
   useEffect(() => {
     updateNoise();
