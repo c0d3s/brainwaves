@@ -25,7 +25,7 @@ export function BinauralControls({ binaural, setBinaural }: Props) {
             key={key}
             onClick={() => setBinaural(key as keyof typeof BINAURAL_FREQ)}
             variant={binaural === key ? 'contained' : 'outlined'}
-            color="primary"
+            color={binaural === key ? "primary" : "secondary"}  
           >
             {key.charAt(0).toUpperCase() + key.slice(1)}
           </Button>

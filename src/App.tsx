@@ -11,6 +11,9 @@ import { useAudioState } from './hooks/useAudioState';
 import brainwavesLogo from './assets/brainwaves.svg'
 import { SOLFEGGIO_FREQ, BINAURAL_FREQ } from './constants';
 import { FrequencyCanvas } from './components/FrequencyCanvas';
+import { ThemeProvider } from '@mui/material/styles';
+import CssBaseline from '@mui/material/CssBaseline';
+import { theme } from './theme';
 declare global {
   interface Window { synthLeft: any; synthRight: any; synthNoise: any; harmonic: any; harmonicLFO: any; }
 }
@@ -79,7 +82,8 @@ function App() {
   };
 
   return (
-    <>
+    <ThemeProvider theme={theme}>
+      <CssBaseline />
       <div>
         <IconButton color="primary">
           <img src={brainwavesLogo} className="logo" alt="Brainwaves logo" />
@@ -113,7 +117,7 @@ function App() {
           onRandomize={randomizeBeat}
         />
       </div>
-    </>
+    </ThemeProvider>
   )
 }
 

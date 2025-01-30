@@ -25,7 +25,7 @@ export function SolfeggioControls({ solfeggio, setSolfeggio }: Props) {
             key={key}
             onClick={() => setSolfeggio(key as keyof typeof SOLFEGGIO_FREQ)}
             variant={solfeggio === key ? 'contained' : 'outlined'}
-            color="primary"
+            color={solfeggio === key ? "primary" : "secondary"}
           >
             {key.charAt(0).toUpperCase() + key.slice(1)}
           </Button>

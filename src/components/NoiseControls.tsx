@@ -26,7 +26,7 @@ export function NoiseControls({ noiseType, setNoiseType }: Props) {
             key={type}
             onClick={() => setNoiseType(type as NoiseType)}
             variant={noiseType === type ? 'contained' : 'outlined'}
-            color="primary"
+            color={noiseType === type ? "primary" : "secondary"}
           >
             {type.charAt(0).toUpperCase() + type.slice(1)}
           </Button>
