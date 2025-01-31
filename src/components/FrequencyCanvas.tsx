@@ -147,37 +147,81 @@ export function FrequencyCanvas({
     const ctx = canvas.getContext("2d");
     if (!ctx) return;
 
-    // Clear canvas
-    ctx.clearRect(0, 0, canvas.width, canvas.height);
+    let animationFrameId: number;
+    let phase = 0;
 
-    // Draw gradient background
-    const gradient = ctx.createLinearGradient(
-      0,
-      0,
-      canvas.width,
-      canvas.height,
-    );
-    gradient.addColorStop(0, "#1a1a1a");
-    gradient.addColorStop(1, "#4a4a4a");
-    ctx.fillStyle = gradient;
-    ctx.fillRect(0, 0, canvas.width, canvas.height);
+    const draw = () => {
+      // Clear canvas
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-    // Draw current position
-    if (isMouseDown) {
-      ctx.beginPath();
-      ctx.arc(currentPosition.x, currentPosition.y, 5, 0, 2 * Math.PI);
-      ctx.fillStyle = "#00ff00";
-      ctx.fill();
-    }
+      // Draw gradient background
+      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      gradient.addColorStop(0, "#1a1a1a");
+      gradient.addColorStop(1, "#4a4a4a");
+      ctx.fillStyle = gradient;
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
 
-    // Draw stored point
-    if (point) {
-      ctx.beginPath();
-      ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
-      ctx.fillStyle = "#00ff00";
-      ctx.fill();
-    }
-  }, [currentPosition, isMouseDown, point]);
+      // Draw sine waves
+      const drawSineWave = (frequency: number, color: string, yOffset: number) => {
+        ctx.beginPath();
+        ctx.strokeStyle = color;
+        ctx.lineWidth = 2;
+
+        for (let x = 0; x < canvas.width; x++) {
+          // Calculate y position based on frequency and current phase
+          const y = Math.sin(
+            (x * frequency * 0.01) + phase
+          ) * 30 + yOffset;
+          
+          if (x === 0) {
+            ctx.moveTo(x, y);
+          } else {
+            ctx.lineTo(x, y);
+          }
+        }
+        ctx.stroke();
+      };
+
+      // Draw left and right frequency waves
+      drawSineWave(
+        oscillatorOptions.left.frequency,
+        'rgba(0, 255, 0, 0.5)',
+        canvas.height * 0.4
+      );
+      drawSineWave(
+        oscillatorOptions.right.frequency,
+        'rgba(0, 255, 255, 0.5)',
+        canvas.height * 0.6
+      );
+
+      // Draw current position
+      if (isMouseDown) {
+        ctx.beginPath();
+        ctx.arc(currentPosition.x, currentPosition.y, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = "#00ff00";
+        ctx.fill();
+      }
+
+      // Draw stored point
+      if (point) {
+        ctx.beginPath();
+        ctx.arc(point.x, point.y, 5, 0, 2 * Math.PI);
+        ctx.fillStyle = "#00ff00";
+        ctx.fill();
+      }
+
+      // Update phase for animation
+      phase += 0.05;
+      animationFrameId = requestAnimationFrame(draw);
+    };
+
+    draw();
+
+    // Cleanup
+    return () => {
+      cancelAnimationFrame(animationFrameId);
+    };
+  }, [currentPosition, isMouseDown, point, oscillatorOptions.left.frequency, oscillatorOptions.right.frequency]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
