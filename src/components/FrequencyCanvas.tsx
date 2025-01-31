@@ -63,7 +63,6 @@ export function FrequencyCanvas({
     if (isMouseDown) {
       const frequencies = calculateFrequencies(x, y);
       if (frequencies) {
-        console.log('mousemove', frequencies.leftFreq, frequencies.rightFreq);
         debouncedFrequencyChange(frequencies.leftFreq, frequencies.rightFreq);
       }
     }
@@ -76,7 +75,6 @@ export function FrequencyCanvas({
       currentPosition.y,
     );
     if (frequencies) {
-      console.log('mousedown', frequencies.leftFreq, frequencies.rightFreq);
       debouncedFrequencyChange(frequencies.leftFreq, frequencies.rightFreq);
       setPoint(currentPosition);
     }
@@ -84,7 +82,6 @@ export function FrequencyCanvas({
 
   const handleMouseUp = () => {
     setIsMouseDown(false);
-    console.log('mouseup', oscillatorOptions.left.frequency, beat);
   };
 
   // Clean up the debounced function on unmount
@@ -162,21 +159,35 @@ export function FrequencyCanvas({
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Draw sine waves
-      const drawSineWave = (frequency: number, color: string, yOffset: number) => {
+      const drawSineWave = (frequency: number, color: string, yOffset: number, amplitude = 30) => {
         ctx.beginPath();
         ctx.strokeStyle = color;
         ctx.lineWidth = 2;
+        
+        // Enable anti-aliasing
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
 
-        for (let x = 0; x < canvas.width; x++) {
-          // Calculate y position based on frequency and current phase
+        // Increase resolution by using smaller steps
+        const steps = canvas.width * 2;
+        const dx = canvas.width / steps;
+
+        for (let i = 0; i <= steps; i++) {
+          const x = i * dx;
           const y = Math.sin(
             (x * frequency * 0.01) + phase
-          ) * 30 + yOffset;
+          ) * amplitude + yOffset;
           
-          if (x === 0) {
+          if (i === 0) {
             ctx.moveTo(x, y);
           } else {
-            ctx.lineTo(x, y);
+            const prevX = (i - 1) * dx;
+            const prevY = Math.sin(
+              (prevX * frequency * 0.01) + phase
+            ) * amplitude + yOffset;
+            
+            const cpX = (x + prevX) / 2;
+            ctx.quadraticCurveTo(cpX, prevY, x, y);
           }
         }
         ctx.stroke();
@@ -186,12 +197,20 @@ export function FrequencyCanvas({
       drawSineWave(
         oscillatorOptions.left.frequency,
         'rgba(0, 255, 0, 0.5)',
-        canvas.height * 0.4
+        canvas.height * 0.3
       );
       drawSineWave(
         oscillatorOptions.right.frequency,
         'rgba(0, 255, 255, 0.5)',
-        canvas.height * 0.6
+        canvas.height * 0.5
+      );
+
+      // Draw binaural beat wave
+      drawSineWave(
+        beat,
+        'rgba(255, 100, 100, 0.5)',
+        canvas.height * 0.7,
+        45  // Slightly larger amplitude for better visibility
       );
 
       // Draw current position
@@ -221,7 +240,7 @@ export function FrequencyCanvas({
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [currentPosition, isMouseDown, point, oscillatorOptions.left.frequency, oscillatorOptions.right.frequency]);
+  }, [currentPosition, isMouseDown, point, oscillatorOptions.left.frequency, oscillatorOptions.right.frequency, beat]);
 
   return (
     <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>

@@ -101,7 +101,6 @@ export function useAudioState({
 
   const randomizeBeat = () => {
     const newBeat = calcRandomBeat(binaural);
-    console.log('randomizeBeat', newBeat);
     setBeat(newBeat);
     const rightFreq = oscillatorOptions.left.frequency + newBeat;
     updateSynthFrequencies(oscillatorOptions.left.frequency, rightFreq);
@@ -139,7 +138,6 @@ export function useAudioState({
   }, [noiseType, isPlaying]);
 
   useEffect(() => {
-    console.log('this effect', oscillatorOptions.left.frequency, oscillatorOptions.right.frequency);
     if (oscillatorOptions.left.frequency < oscillatorOptions.right.frequency) {
       setBeat(oscillatorOptions.right.frequency - oscillatorOptions.left.frequency);
     }
