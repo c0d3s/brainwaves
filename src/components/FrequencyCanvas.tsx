@@ -162,14 +162,14 @@ export function FrequencyCanvas({
       const drawSineWave = (frequency: number, color: string, yOffset: number, amplitude = 30) => {
         ctx.beginPath();
         ctx.strokeStyle = color;
-        ctx.lineWidth = 2;
+        ctx.lineWidth = 24;
         
         // Enable anti-aliasing
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
 
-        // Increase resolution by using smaller steps
-        const steps = canvas.width * 2;
+        // Decrease resolution by using larger steps
+        const steps = canvas.width * .25;
         const dx = canvas.width / steps;
 
         for (let i = 0; i <= steps; i++) {
@@ -196,21 +196,21 @@ export function FrequencyCanvas({
       // Draw left and right frequency waves
       drawSineWave(
         oscillatorOptions.left.frequency,
-        'rgba(0, 255, 0, 0.5)',
-        canvas.height * 0.3
+        'rgba(200, 0, 200, 0.5)',
+        canvas.height * 0.25
       );
       drawSineWave(
         oscillatorOptions.right.frequency,
         'rgba(0, 255, 255, 0.5)',
-        canvas.height * 0.5
+        canvas.height * 0.75
       );
 
       // Draw binaural beat wave
       drawSineWave(
-        beat,
+        oscillatorOptions.right.frequency - oscillatorOptions.left.frequency,
         'rgba(255, 100, 100, 0.5)',
-        canvas.height * 0.7,
-        45  // Slightly larger amplitude for better visibility
+        canvas.height * 0.5,
+        60  // Slightly larger amplitude for better visibility
       );
 
       // Draw current position
