@@ -162,28 +162,40 @@ export function FrequencyCanvas({
       const drawSineWave = (frequency: number, color: string, yOffset: number, amplitude = 30) => {
         ctx.beginPath();
         ctx.strokeStyle = color;
-        ctx.lineWidth = 24;
+        ctx.lineWidth = amplitude > 30 ? 16 : 2;
         
         // Enable anti-aliasing
         ctx.lineCap = 'round';
         ctx.lineJoin = 'round';
 
-        // Decrease resolution by using larger steps
-        const steps = canvas.width * .25;
+        // Calculate points for 1 second of time
+        const steps = canvas.width * 2;
         const dx = canvas.width / steps;
+        let peakX = -1;
+        let maxY = -Infinity;
 
         for (let i = 0; i <= steps; i++) {
           const x = i * dx;
+          // Convert x position to time (0 to 1 second)
+          const time = x / canvas.width;
+          // Calculate y using frequency in Hz (cycles per second)
           const y = Math.sin(
-            (x * frequency * 0.01) + phase
+            2 * Math.PI * frequency * time + phase
           ) * amplitude + yOffset;
+          
+          // Track the highest point
+          if (y > maxY) {
+            maxY = y;
+            peakX = x;
+          }
           
           if (i === 0) {
             ctx.moveTo(x, y);
           } else {
             const prevX = (i - 1) * dx;
+            const prevTime = prevX / canvas.width;
             const prevY = Math.sin(
-              (prevX * frequency * 0.01) + phase
+              2 * Math.PI * frequency * prevTime + phase
             ) * amplitude + yOffset;
             
             const cpX = (x + prevX) / 2;
@@ -191,6 +203,7 @@ export function FrequencyCanvas({
           }
         }
         ctx.stroke();
+        return peakX;
       };
 
       // Draw left and right frequency waves
@@ -229,8 +242,8 @@ export function FrequencyCanvas({
         ctx.fill();
       }
 
-      // Update phase for animation
-      phase += 0.05;
+      // Update phase for animation (adjust speed)
+      phase += 0.05 * 2 * Math.PI; // This will determine how fast the waves appear to move
       animationFrameId = requestAnimationFrame(draw);
     };
 
