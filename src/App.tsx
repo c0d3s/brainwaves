@@ -12,7 +12,7 @@ import { FrequencyCanvas } from "./components/FrequencyCanvas";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { theme } from "./theme";
-import * as Tone from 'tone';
+import * as Tone from "tone";
 
 declare global {
   interface Window {

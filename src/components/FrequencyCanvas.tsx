@@ -26,57 +26,69 @@ export function FrequencyCanvas({
   const [point, setPoint] = useState<{ x: number; y: number } | null>(null);
 
   // Memoize frequency ranges since they only depend on props
-  const frequencyRanges = useMemo(() => ({
-    yMin: solfeggioFreq * 0.75,
-    yMax: solfeggioFreq * 1.5,
-    xMin: binauralFreqMin,
-    xMax: binauralFreqMax
-  }), [solfeggioFreq, binauralFreqMin, binauralFreqMax]);
+  const frequencyRanges = useMemo(
+    () => ({
+      yMin: solfeggioFreq * 0.75,
+      yMax: solfeggioFreq * 1.5,
+      xMin: binauralFreqMin,
+      xMax: binauralFreqMax,
+    }),
+    [solfeggioFreq, binauralFreqMin, binauralFreqMax],
+  );
 
   // Memoize the frequency calculation function
-  const calculateFrequencies = useCallback((x: number, y: number) => {
-    const canvas = canvasRef.current;
-    if (!canvas) return;
+  const calculateFrequencies = useCallback(
+    (x: number, y: number) => {
+      const canvas = canvasRef.current;
+      if (!canvas) return;
 
-    const { yMin, yMax, xMin, xMax } = frequencyRanges;
-    
-    // Convert canvas coordinates to frequency values
-    const leftFreq = yMax - (y / canvas.height) * (yMax - yMin);
-    const binauralFreq = (x / canvas.width) * (xMax - xMin) + xMin;
-    const rightFreq = leftFreq + binauralFreq;
+      const { yMin, yMax, xMin, xMax } = frequencyRanges;
 
-    return { leftFreq, rightFreq };
-  }, [frequencyRanges]);
+      // Convert canvas coordinates to frequency values
+      const leftFreq = yMax - (y / canvas.height) * (yMax - yMin);
+      const binauralFreq = (x / canvas.width) * (xMax - xMin) + xMin;
+      const rightFreq = leftFreq + binauralFreq;
+
+      return { leftFreq, rightFreq };
+    },
+    [frequencyRanges],
+  );
 
   // Debounce the frequency change callback
   const debouncedFrequencyChange = useCallback(
     debounce((leftFreq: number, rightFreq: number) => {
       onFrequencyChange(leftFreq, rightFreq);
     }, 50),
-    [onFrequencyChange]
+    [onFrequencyChange],
   );
 
   // Memoize event handlers
-  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
-    if (!canvasRef.current) return;
+  const handleMouseMove = useCallback(
+    (e: React.MouseEvent<HTMLCanvasElement>) => {
+      if (!canvasRef.current) return;
 
-    const rect = canvasRef.current.getBoundingClientRect();
-    const x = e.clientX - rect.left;
-    const y = e.clientY - rect.top;
+      const rect = canvasRef.current.getBoundingClientRect();
+      const x = e.clientX - rect.left;
+      const y = e.clientY - rect.top;
 
-    setCurrentPosition({ x, y });
+      setCurrentPosition({ x, y });
 
-    if (isMouseDown) {
-      const frequencies = calculateFrequencies(x, y);
-      if (frequencies) {
-        debouncedFrequencyChange(frequencies.leftFreq, frequencies.rightFreq);
+      if (isMouseDown) {
+        const frequencies = calculateFrequencies(x, y);
+        if (frequencies) {
+          debouncedFrequencyChange(frequencies.leftFreq, frequencies.rightFreq);
+        }
       }
-    }
-  }, [isMouseDown, calculateFrequencies, debouncedFrequencyChange]);
+    },
+    [isMouseDown, calculateFrequencies, debouncedFrequencyChange],
+  );
 
   const handleMouseDown = useCallback(() => {
     setIsMouseDown(true);
-    const frequencies = calculateFrequencies(currentPosition.x, currentPosition.y);
+    const frequencies = calculateFrequencies(
+      currentPosition.x,
+      currentPosition.y,
+    );
     if (frequencies) {
       debouncedFrequencyChange(frequencies.leftFreq, frequencies.rightFreq);
       setPoint(currentPosition);

@@ -3,7 +3,7 @@ import {
   ShuffleOutlined,
   StopOutlined,
 } from "@mui/icons-material";
-import { Button, IconButton } from "@mui/material";
+import { Button } from "@mui/material";
 
 interface Props {
   isPlaying: boolean;
@@ -12,7 +12,7 @@ interface Props {
   onRandomize: () => void;
 }
 
-export function PlayControls({ isPlaying, beat, onPlay, onRandomize }: Props) {
+export function PlayControls({ isPlaying, onPlay, onRandomize }: Props) {
   return (
     <div>
       <Button

@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect } from "react";
 import * as Tone from "tone";
 import { calcRandomBeat } from "../utils";
 import { BINAURAL_FREQ, SOLFEGGIO_FREQ } from "../constants";
