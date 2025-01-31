@@ -213,6 +213,17 @@ export function FrequencyCanvas({
           onMouseUp={handleMouseUp}
           onMouseLeave={handleMouseUp}
         />
+
+        <div style={{ 
+          writingMode: 'vertical-rl', 
+          textAlign: 'center',
+          color: 'rgba(255, 255, 255, 0.7)',
+        }}>
+          Binaural Frequency
+          <div style={{ marginTop: '8px', color: '#fff' }}>
+            {(leftFreq + beat).toFixed(2)} Hz
+          </div>
+        </div>
       </div>
 
       <div style={{ 
