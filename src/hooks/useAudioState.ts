@@ -42,10 +42,17 @@ export function useAudioState({
     "white" | "pink" | "brown" | "off"
   >("off");
   const [beat, setBeat] = useState(0);
-  const [oscillatorOptions, setOscillatorOptions] = useState<OscillatorOptions>({
-    left: { frequency: SOLFEGGIO_FREQ[DEFAULT_SOLFEGGIO], pan: -1 },
-    right: { frequency: SOLFEGGIO_FREQ[DEFAULT_SOLFEGGIO] + BINAURAL_FREQ[DEFAULT_BINAURAL].min, pan: 1 }
-  });
+  const [oscillatorOptions, setOscillatorOptions] = useState<OscillatorOptions>(
+    {
+      left: { frequency: SOLFEGGIO_FREQ[DEFAULT_SOLFEGGIO], pan: -1 },
+      right: {
+        frequency:
+          SOLFEGGIO_FREQ[DEFAULT_SOLFEGGIO] +
+          BINAURAL_FREQ[DEFAULT_BINAURAL].min,
+        pan: 1,
+      },
+    },
+  );
   const [harmonicOptions, setHarmonicOptions] = useState({
     frequency: 0,
     pan: 0,
@@ -68,9 +75,9 @@ export function useAudioState({
   const updateSynthFrequencies = (leftFreq: number, rightFreq: number) => {
     setOscillatorOptions({
       left: { ...oscillatorOptions.left, frequency: leftFreq },
-      right: { ...oscillatorOptions.right, frequency: rightFreq }
+      right: { ...oscillatorOptions.right, frequency: rightFreq },
     });
-    
+
     if (synthLeft.current) {
       updateFrequency(synthLeft.current, leftFreq);
     }
@@ -97,7 +104,6 @@ export function useAudioState({
       console.error("Error updating noise:", error);
     }
   };
-
 
   const randomizeBeat = () => {
     const newBeat = calcRandomBeat(binaural);
@@ -139,7 +145,9 @@ export function useAudioState({
 
   useEffect(() => {
     if (oscillatorOptions.left.frequency < oscillatorOptions.right.frequency) {
-      setBeat(oscillatorOptions.right.frequency - oscillatorOptions.left.frequency);
+      setBeat(
+        oscillatorOptions.right.frequency - oscillatorOptions.left.frequency,
+      );
     }
   }, [oscillatorOptions.left.frequency, oscillatorOptions.right.frequency]);
 

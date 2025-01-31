@@ -1,7 +1,7 @@
 import { useRef, useEffect, useState, useCallback } from "react";
 import debounce from "lodash/debounce";
-import { IconButton } from '@mui/material';
-import { TuneOutlined } from '@mui/icons-material';
+import { IconButton } from "@mui/material";
+import { TuneOutlined } from "@mui/icons-material";
 
 interface Props {
   solfeggioFreq: number;
@@ -27,7 +27,7 @@ export function FrequencyCanvas({
 
   // Calculate frequency ranges
   const yMin = solfeggioFreq * 0.75;
-  const yMax = solfeggioFreq * 1.5; 
+  const yMax = solfeggioFreq * 1.5;
   const xMin = binauralFreqMin; // Lowest binaural frequency
   const xMax = binauralFreqMax; // Highest binaural frequency
 
@@ -152,21 +152,31 @@ export function FrequencyCanvas({
       ctx.clearRect(0, 0, canvas.width, canvas.height);
 
       // Draw gradient background
-      const gradient = ctx.createLinearGradient(0, 0, canvas.width, canvas.height);
+      const gradient = ctx.createLinearGradient(
+        0,
+        0,
+        canvas.width,
+        canvas.height,
+      );
       gradient.addColorStop(0, "#1a1a1a");
       gradient.addColorStop(1, "#4a4a4a");
       ctx.fillStyle = gradient;
       ctx.fillRect(0, 0, canvas.width, canvas.height);
 
       // Draw sine waves
-      const drawSineWave = (frequency: number, color: string, yOffset: number, amplitude = 30) => {
+      const drawSineWave = (
+        frequency: number,
+        color: string,
+        yOffset: number,
+        amplitude = 30,
+      ) => {
         ctx.beginPath();
         ctx.strokeStyle = color;
         ctx.lineWidth = amplitude > 30 ? 16 : 2;
-        
+
         // Enable anti-aliasing
-        ctx.lineCap = 'round';
-        ctx.lineJoin = 'round';
+        ctx.lineCap = "round";
+        ctx.lineJoin = "round";
 
         // Calculate points for 1 second of time
         const steps = canvas.width * 2;
@@ -179,25 +189,25 @@ export function FrequencyCanvas({
           // Convert x position to time (0 to 1 second)
           const time = x / canvas.width;
           // Calculate y using frequency in Hz (cycles per second)
-          const y = Math.sin(
-            2 * Math.PI * frequency * time + phase
-          ) * amplitude + yOffset;
-          
+          const y =
+            Math.sin(2 * Math.PI * frequency * time + phase) * amplitude +
+            yOffset;
+
           // Track the highest point
           if (y > maxY) {
             maxY = y;
             peakX = x;
           }
-          
+
           if (i === 0) {
             ctx.moveTo(x, y);
           } else {
             const prevX = (i - 1) * dx;
             const prevTime = prevX / canvas.width;
-            const prevY = Math.sin(
-              2 * Math.PI * frequency * prevTime + phase
-            ) * amplitude + yOffset;
-            
+            const prevY =
+              Math.sin(2 * Math.PI * frequency * prevTime + phase) * amplitude +
+              yOffset;
+
             const cpX = (x + prevX) / 2;
             ctx.quadraticCurveTo(cpX, prevY, x, y);
           }
@@ -209,21 +219,21 @@ export function FrequencyCanvas({
       // Draw left and right frequency waves
       drawSineWave(
         oscillatorOptions.left.frequency,
-        'rgba(200, 0, 200, 0.5)',
-        canvas.height * 0.25
+        "rgba(200, 0, 200, 0.5)",
+        canvas.height * 0.25,
       );
       drawSineWave(
         oscillatorOptions.right.frequency,
-        'rgba(0, 255, 255, 0.5)',
-        canvas.height * 0.75
+        "rgba(0, 255, 255, 0.5)",
+        canvas.height * 0.75,
       );
 
       // Draw binaural beat wave
       drawSineWave(
         oscillatorOptions.right.frequency - oscillatorOptions.left.frequency,
-        'rgba(255, 100, 100, 0.5)',
+        "rgba(255, 100, 100, 0.5)",
         canvas.height * 0.5,
-        60  // Slightly larger amplitude for better visibility
+        60, // Slightly larger amplitude for better visibility
       );
 
       // Draw current position
@@ -253,23 +263,39 @@ export function FrequencyCanvas({
     return () => {
       cancelAnimationFrame(animationFrameId);
     };
-  }, [currentPosition, isMouseDown, point, oscillatorOptions.left.frequency, oscillatorOptions.right.frequency, beat]);
+  }, [
+    currentPosition,
+    isMouseDown,
+    point,
+    oscillatorOptions.left.frequency,
+    oscillatorOptions.right.frequency,
+    beat,
+  ]);
 
   return (
-    <div style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', gap: '8px' }}>
+    <div
+      style={{
+        display: "flex",
+        flexDirection: "column",
+        alignItems: "center",
+        gap: "8px",
+      }}
+    >
       <IconButton color="secondary">
         <TuneOutlined />
       </IconButton>
-      
-      <div style={{ display: 'flex', alignItems: 'center', gap: '16px' }}>
-        <div style={{ 
-          writingMode: 'vertical-rl', 
-          transform: 'rotate(180deg)', 
-          textAlign: 'center',
-          color: 'rgba(255, 255, 255, 0.7)',
-        }}>
+
+      <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
+        <div
+          style={{
+            writingMode: "vertical-rl",
+            transform: "rotate(180deg)",
+            textAlign: "center",
+            color: "rgba(255, 255, 255, 0.7)",
+          }}
+        >
           Base Frequency
-          <div style={{ marginTop: '8px', color: '#fff' }}>
+          <div style={{ marginTop: "8px", color: "#fff" }}>
             {oscillatorOptions.left.frequency.toFixed(2)} Hz
           </div>
         </div>
@@ -279,10 +305,10 @@ export function FrequencyCanvas({
           width={400}
           height={400}
           style={{
-            border: '4px solid #333',
-            borderRadius: '12px',
-            background: '#2a2a2a',
-            cursor: 'crosshair'
+            border: "4px solid #333",
+            borderRadius: "12px",
+            background: "#2a2a2a",
+            cursor: "crosshair",
           }}
           onMouseMove={handleMouseMove}
           onMouseDown={handleMouseDown}
@@ -290,25 +316,29 @@ export function FrequencyCanvas({
           onMouseLeave={handleMouseUp}
         />
 
-        <div style={{ 
-          writingMode: 'vertical-rl', 
-          textAlign: 'center',
-          color: 'rgba(255, 255, 255, 0.7)',
-        }}>
+        <div
+          style={{
+            writingMode: "vertical-rl",
+            textAlign: "center",
+            color: "rgba(255, 255, 255, 0.7)",
+          }}
+        >
           Binaural Frequency
-          <div style={{ marginTop: '8px', color: '#fff' }}>
+          <div style={{ marginTop: "8px", color: "#fff" }}>
             {oscillatorOptions.right.frequency.toFixed(2)} Hz
           </div>
         </div>
       </div>
 
-      <div style={{ 
-        textAlign: 'center',
-        color: 'rgba(255, 255, 255, 0.7)',
-        minHeight: '50px'
-      }}>
+      <div
+        style={{
+          textAlign: "center",
+          color: "rgba(255, 255, 255, 0.7)",
+          minHeight: "50px",
+        }}
+      >
         Binaural Beat
-        <div style={{ marginTop: '4px', color: '#fff' }}>
+        <div style={{ marginTop: "4px", color: "#fff" }}>
           {beat.toFixed(2)} Hz
         </div>
       </div>
