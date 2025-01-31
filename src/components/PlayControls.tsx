@@ -1,4 +1,5 @@
-import { Button } from "@mui/material";
+import { PlayArrowOutlined, ShuffleOutlined, StopOutlined } from "@mui/icons-material";
+import { Button, IconButton } from "@mui/material";
 
 interface Props {
   isPlaying: boolean;
@@ -16,7 +17,7 @@ export function PlayControls({ isPlaying, beat, onPlay, onRandomize }: Props) {
         onClick={onPlay}
         sx={{ margin: "1rem" }}
       >
-        {isPlaying ? "Stop" : "Play"}
+          {isPlaying ? <StopOutlined /> : <PlayArrowOutlined />}
       </Button>
       <Button
         variant="contained"
@@ -24,7 +25,7 @@ export function PlayControls({ isPlaying, beat, onPlay, onRandomize }: Props) {
         onClick={onRandomize}
         sx={{ margin: "1rem" }}
       >
-        {isPlaying ? `${beat} Hz` : "Beat"}
+          <ShuffleOutlined />
       </Button>
     </div>
   );
