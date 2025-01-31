@@ -63,6 +63,7 @@ export function FrequencyCanvas({
     if (isMouseDown) {
       const frequencies = calculateFrequencies(x, y);
       if (frequencies) {
+        console.log('mousemove', frequencies.leftFreq, frequencies.rightFreq);
         debouncedFrequencyChange(frequencies.leftFreq, frequencies.rightFreq);
       }
     }
@@ -75,6 +76,7 @@ export function FrequencyCanvas({
       currentPosition.y,
     );
     if (frequencies) {
+      console.log('mousedown', frequencies.leftFreq, frequencies.rightFreq);
       debouncedFrequencyChange(frequencies.leftFreq, frequencies.rightFreq);
       setPoint(currentPosition);
     }
@@ -82,6 +84,7 @@ export function FrequencyCanvas({
 
   const handleMouseUp = () => {
     setIsMouseDown(false);
+    console.log('mouseup', leftFreq, beat);
   };
 
   // Clean up the debounced function on unmount
@@ -188,7 +191,6 @@ export function FrequencyCanvas({
           transform: 'rotate(180deg)', 
           textAlign: 'center',
           color: 'rgba(255, 255, 255, 0.7)',
-          minWidth: '100px'
         }}>
           Base Frequency
           <div style={{ marginTop: '8px', color: '#fff' }}>
@@ -201,8 +203,8 @@ export function FrequencyCanvas({
           width={400}
           height={400}
           style={{
-            border: '1px solid #333',
-            borderRadius: '4px',
+            border: '4px solid #333',
+            borderRadius: '12px',
             background: '#2a2a2a',
             cursor: 'crosshair'
           }}

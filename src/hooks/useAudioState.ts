@@ -40,7 +40,6 @@ export function useAudioState({
     synth: Tone.Synth,
     options: { frequency: number },
   ) => {
-    console.log("updateSynthFrequency", synth, options.frequency);
     synth.frequency.linearRampTo(options.frequency, 1);
   };
 
@@ -59,8 +58,9 @@ export function useAudioState({
   const updateRightFrequency = () => {
     const rightFreq = calcFreq("right", solfeggio, binaural);
     setRightOptions({ frequency: rightFreq, pan: 1 });
-    setBeat(rightFreq - leftOptions.frequency);
-    updateFrequency(synthRight.current!, rightFreq);
+    if (synthRight.current) {
+      updateFrequency(synthRight.current, rightFreq);
+    }
   };
 
   const updateNoise = () => {
@@ -82,13 +82,10 @@ export function useAudioState({
     }
   };
 
-  // Effect to handle noise updates
-  useEffect(() => {
-    updateNoise();
-  }, [noiseType, isPlaying]);
 
   const randomizeBeat = () => {
     const newBeat = calcRandomBeat(binaural);
+    console.log('randomizeBeat', newBeat);
     setBeat(newBeat);
     const rightFreq = leftOptions.frequency + newBeat;
     setRightOptions({ frequency: rightFreq, pan: 1 });
@@ -119,11 +116,25 @@ export function useAudioState({
   useEffect(() => {
     updateHarmonicFrequency();
     updateRightFrequency();
+    console.log('useEffect, left, binaural,', leftOptions.frequency, rightOptions.frequency);
   }, [leftOptions.frequency, binaural]);
 
   useEffect(() => {
-    setIsInitialized(true);
+    if (!isInitialized) {
+      setIsInitialized(true);
+    }
   }, []);
+
+  useEffect(() => {
+    updateNoise();
+  }, [noiseType, isPlaying]);
+
+  useEffect(() => {
+    console.log('this effect', leftOptions.frequency, rightOptions.frequency);
+    if (leftOptions.frequency < rightOptions.frequency) {
+      setBeat(rightOptions.frequency - leftOptions.frequency);
+    }
+  }, [leftOptions.frequency, rightOptions.frequency]);
 
   return {
     isPlaying,

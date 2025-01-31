@@ -19,7 +19,7 @@ export function useSynths() {
   const synthNoise = useRef(
     new Tone.Noise({
       type: "white",
-      volume: -40,
+      volume: -20,
     }).connect(new Tone.Panner(0).toDestination()),
   );
 
