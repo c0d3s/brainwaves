@@ -8,8 +8,8 @@ interface Props {
   binauralFreqMin: number;
   binauralFreqMax: number;
   onFrequencyChange: (leftFreq: number, rightFreq: number) => void;
-  leftFreq?: number;
-  beat?: number;
+  oscillatorOptions: OscillatorOptions;
+  beat: number;
 }
 
 export function FrequencyCanvas({
@@ -17,8 +17,8 @@ export function FrequencyCanvas({
   binauralFreqMin,
   binauralFreqMax,
   onFrequencyChange,
-  leftFreq = 0,
-  beat = 0,
+  oscillatorOptions,
+  beat,
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isMouseDown, setIsMouseDown] = useState(false);
@@ -84,7 +84,7 @@ export function FrequencyCanvas({
 
   const handleMouseUp = () => {
     setIsMouseDown(false);
-    console.log('mouseup', leftFreq, beat);
+    console.log('mouseup', oscillatorOptions.left.frequency, beat);
   };
 
   // Clean up the debounced function on unmount
@@ -194,7 +194,7 @@ export function FrequencyCanvas({
         }}>
           Base Frequency
           <div style={{ marginTop: '8px', color: '#fff' }}>
-            {leftFreq.toFixed(2)} Hz
+            {oscillatorOptions.left.frequency.toFixed(2)} Hz
           </div>
         </div>
 
@@ -221,7 +221,7 @@ export function FrequencyCanvas({
         }}>
           Binaural Frequency
           <div style={{ marginTop: '8px', color: '#fff' }}>
-            {(leftFreq + beat).toFixed(2)} Hz
+            {oscillatorOptions.right.frequency.toFixed(2)} Hz
           </div>
         </div>
       </div>

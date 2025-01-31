@@ -45,12 +45,7 @@ function App() {
 
   const handleFrequencyChange = (leftFreq: number, rightFreq: number) => {
     if (!synthLeft.current || !synthRight.current) return;
-    audioState.setLeftOptions({ frequency: leftFreq, pan: -1 });
-    audioState.setRightOptions({ frequency: rightFreq, pan: 1 });
-    audioState.updateSynthFrequency(synthLeft.current, { frequency: leftFreq });
-    audioState.updateSynthFrequency(synthRight.current, {
-      frequency: rightFreq,
-    });
+    audioState.updateSynthFrequencies(leftFreq, rightFreq);
   };
 
   return (
@@ -87,7 +82,7 @@ function App() {
           binauralFreqMin={BINAURAL_FREQ[audioState.binaural].min}
           binauralFreqMax={BINAURAL_FREQ[audioState.binaural].max}
           onFrequencyChange={handleFrequencyChange}
-          leftFreq={audioState.leftOptions.frequency}
+          oscillatorOptions={audioState.oscillatorOptions}
           beat={audioState.beat}
         />
       </div>

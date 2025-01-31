@@ -3,6 +3,9 @@ import * as Tone from "tone";
 import { calcFreq, calcRandomBeat } from "../utils";
 import { BINAURAL_FREQ, SOLFEGGIO_FREQ } from "../constants";
 
+const DEFAULT_SOLFEGGIO: keyof typeof SOLFEGGIO_FREQ = "ut";
+const DEFAULT_BINAURAL: keyof typeof BINAURAL_FREQ = "alpha";
+
 interface SynthRefs {
   synthLeft: React.RefObject<Tone.Oscillator>;
   synthRight: React.RefObject<Tone.Oscillator>;
@@ -10,6 +13,17 @@ interface SynthRefs {
   harmonic: React.RefObject<Tone.Oscillator>;
   harmonicLFO: React.RefObject<Tone.LFO>;
   updateFrequency: (osc: Tone.Oscillator, freq: number) => void;
+}
+
+interface OscillatorOptions {
+  left: {
+    frequency: number;
+    pan: number;
+  };
+  right: {
+    frequency: number;
+    pan: number;
+  };
 }
 
 export function useAudioState({
@@ -28,8 +42,10 @@ export function useAudioState({
     "white" | "pink" | "brown" | "off"
   >("off");
   const [beat, setBeat] = useState(0);
-  const [leftOptions, setLeftOptions] = useState({ frequency: 0, pan: -1 });
-  const [rightOptions, setRightOptions] = useState({ frequency: 0, pan: 1 });
+  const [oscillatorOptions, setOscillatorOptions] = useState<OscillatorOptions>({
+    left: { frequency: SOLFEGGIO_FREQ[DEFAULT_SOLFEGGIO], pan: -1 },
+    right: { frequency: SOLFEGGIO_FREQ[DEFAULT_SOLFEGGIO] + BINAURAL_FREQ[DEFAULT_BINAURAL].min, pan: 1 }
+  });
   const [harmonicOptions, setHarmonicOptions] = useState({
     frequency: 0,
     pan: 0,
@@ -44,20 +60,20 @@ export function useAudioState({
   };
 
   const updateHarmonicFrequency = () => {
-    const harmonicFreq = leftOptions.frequency * 1.5;
+    const harmonicFreq = oscillatorOptions.left.frequency * 1.5;
     setHarmonicOptions({ frequency: harmonicFreq, pan: 0 });
     harmonic.current?.frequency.linearRampTo(harmonicFreq, 1);
   };
 
-  const updateLeftFrequency = () => {
-    const leftFreq = calcFreq("left", solfeggio, binaural);
-    setLeftOptions({ frequency: leftFreq, pan: -1 });
-    updateFrequency(synthLeft.current!, leftFreq);
-  };
-
-  const updateRightFrequency = () => {
-    const rightFreq = calcFreq("right", solfeggio, binaural);
-    setRightOptions({ frequency: rightFreq, pan: 1 });
+  const updateSynthFrequencies = (leftFreq: number, rightFreq: number) => {
+    setOscillatorOptions({
+      left: { ...oscillatorOptions.left, frequency: leftFreq },
+      right: { ...oscillatorOptions.right, frequency: rightFreq }
+    });
+    
+    if (synthLeft.current) {
+      updateFrequency(synthLeft.current, leftFreq);
+    }
     if (synthRight.current) {
       updateFrequency(synthRight.current, rightFreq);
     }
@@ -87,9 +103,8 @@ export function useAudioState({
     const newBeat = calcRandomBeat(binaural);
     console.log('randomizeBeat', newBeat);
     setBeat(newBeat);
-    const rightFreq = leftOptions.frequency + newBeat;
-    setRightOptions({ frequency: rightFreq, pan: 1 });
-    updateFrequency(synthRight.current!, rightFreq);
+    const rightFreq = oscillatorOptions.left.frequency + newBeat;
+    updateSynthFrequencies(oscillatorOptions.left.frequency, rightFreq);
   };
 
   const playTone = async () => {
@@ -110,14 +125,8 @@ export function useAudioState({
   };
 
   useEffect(() => {
-    updateLeftFrequency();
-  }, [solfeggio]);
-
-  useEffect(() => {
     updateHarmonicFrequency();
-    updateRightFrequency();
-    console.log('useEffect, left, binaural,', leftOptions.frequency, rightOptions.frequency);
-  }, [leftOptions.frequency, binaural]);
+  }, [oscillatorOptions.left.frequency]);
 
   useEffect(() => {
     if (!isInitialized) {
@@ -130,11 +139,11 @@ export function useAudioState({
   }, [noiseType, isPlaying]);
 
   useEffect(() => {
-    console.log('this effect', leftOptions.frequency, rightOptions.frequency);
-    if (leftOptions.frequency < rightOptions.frequency) {
-      setBeat(rightOptions.frequency - leftOptions.frequency);
+    console.log('this effect', oscillatorOptions.left.frequency, oscillatorOptions.right.frequency);
+    if (oscillatorOptions.left.frequency < oscillatorOptions.right.frequency) {
+      setBeat(oscillatorOptions.right.frequency - oscillatorOptions.left.frequency);
     }
-  }, [leftOptions.frequency, rightOptions.frequency]);
+  }, [oscillatorOptions.left.frequency, oscillatorOptions.right.frequency]);
 
   return {
     isPlaying,
@@ -142,19 +151,15 @@ export function useAudioState({
     binaural,
     noiseType,
     beat,
-    leftOptions,
-    rightOptions,
+    oscillatorOptions,
     harmonicOptions,
-    updateLeftFrequency,
-    updateRightFrequency,
+    updateSynthFrequencies,
     updateNoise,
     playTone,
     randomizeBeat,
     setSolfeggio,
     setBinaural,
     setNoiseType,
-    setLeftOptions,
-    setRightOptions,
     updateSynthFrequency,
   };
 }

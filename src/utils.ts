@@ -8,7 +8,7 @@ export const calcFreq = (
 ) => {
   const solfeggioFreq = SOLFEGGIO_FREQ[solfeggio];
   if (side === "left") return solfeggioFreq;
-  return randomBeat ? calcRandomBeat(binaural) : calcCenterBeat(binaural) + solfeggioFreq;
+  return solfeggioFreq + (randomBeat ? calcRandomBeat(binaural) : calcCenterBeat(binaural));
 };
 
 export const calcCenterBeat = (binaural: keyof typeof BINAURAL_FREQ) => {
