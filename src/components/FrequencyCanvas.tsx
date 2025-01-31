@@ -1,4 +1,4 @@
-import { useRef, useEffect, useState, useCallback } from "react";
+import { useRef, useEffect, useState, useCallback, useMemo } from "react";
 import debounce from "lodash/debounce";
 import { IconButton } from "@mui/material";
 import { TuneOutlined } from "@mui/icons-material";
@@ -22,36 +22,42 @@ export function FrequencyCanvas({
 }: Props) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const [isMouseDown, setIsMouseDown] = useState(false);
-  const [currentPosition, setCurrentPosition] = useState({ x: 200, y: 200 }); // Center of 400x400 canvas
+  const [currentPosition, setCurrentPosition] = useState({ x: 200, y: 200 });
   const [point, setPoint] = useState<{ x: number; y: number } | null>(null);
 
-  // Calculate frequency ranges
-  const yMin = solfeggioFreq * 0.75;
-  const yMax = solfeggioFreq * 1.5;
-  const xMin = binauralFreqMin; // Lowest binaural frequency
-  const xMax = binauralFreqMax; // Highest binaural frequency
+  // Memoize frequency ranges since they only depend on props
+  const frequencyRanges = useMemo(() => ({
+    yMin: solfeggioFreq * 0.75,
+    yMax: solfeggioFreq * 1.5,
+    xMin: binauralFreqMin,
+    xMax: binauralFreqMax
+  }), [solfeggioFreq, binauralFreqMin, binauralFreqMax]);
 
-  // Create a debounced version of onFrequencyChange
-  const debouncedFrequencyChange = useCallback(
-    debounce((leftFreq: number, rightFreq: number) => {
-      onFrequencyChange(leftFreq, rightFreq);
-    }, 100),
-    [onFrequencyChange],
-  );
-
-  const calculateFrequencies = (x: number, y: number) => {
+  // Memoize the frequency calculation function
+  const calculateFrequencies = useCallback((x: number, y: number) => {
     const canvas = canvasRef.current;
     if (!canvas) return;
 
+    const { yMin, yMax, xMin, xMax } = frequencyRanges;
+    
     // Convert canvas coordinates to frequency values
     const leftFreq = yMax - (y / canvas.height) * (yMax - yMin);
     const binauralFreq = (x / canvas.width) * (xMax - xMin) + xMin;
     const rightFreq = leftFreq + binauralFreq;
 
     return { leftFreq, rightFreq };
-  };
+  }, [frequencyRanges]);
 
-  const handleMouseMove = (e: React.MouseEvent<HTMLCanvasElement>) => {
+  // Debounce the frequency change callback
+  const debouncedFrequencyChange = useCallback(
+    debounce((leftFreq: number, rightFreq: number) => {
+      onFrequencyChange(leftFreq, rightFreq);
+    }, 50),
+    [onFrequencyChange]
+  );
+
+  // Memoize event handlers
+  const handleMouseMove = useCallback((e: React.MouseEvent<HTMLCanvasElement>) => {
     if (!canvasRef.current) return;
 
     const rect = canvasRef.current.getBoundingClientRect();
@@ -66,25 +72,22 @@ export function FrequencyCanvas({
         debouncedFrequencyChange(frequencies.leftFreq, frequencies.rightFreq);
       }
     }
-  };
+  }, [isMouseDown, calculateFrequencies, debouncedFrequencyChange]);
 
-  const handleMouseDown = () => {
+  const handleMouseDown = useCallback(() => {
     setIsMouseDown(true);
-    const frequencies = calculateFrequencies(
-      currentPosition.x,
-      currentPosition.y,
-    );
+    const frequencies = calculateFrequencies(currentPosition.x, currentPosition.y);
     if (frequencies) {
       debouncedFrequencyChange(frequencies.leftFreq, frequencies.rightFreq);
       setPoint(currentPosition);
     }
-  };
+  }, [currentPosition, calculateFrequencies, debouncedFrequencyChange]);
 
-  const handleMouseUp = () => {
+  const handleMouseUp = useCallback(() => {
     setIsMouseDown(false);
-  };
+  }, []);
 
-  // Clean up the debounced function on unmount
+  // Clean up debounced function
   useEffect(() => {
     return () => {
       debouncedFrequencyChange.cancel();

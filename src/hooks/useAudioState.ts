@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import * as Tone from "tone";
-import { calcFreq, calcRandomBeat } from "../utils";
+import { calcRandomBeat } from "../utils";
 import { BINAURAL_FREQ, SOLFEGGIO_FREQ } from "../constants";
 
 const DEFAULT_SOLFEGGIO: keyof typeof SOLFEGGIO_FREQ = "ut";
