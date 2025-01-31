@@ -1,6 +1,4 @@
-import { useState, useRef } from "react";
 import "./App.css";
-import * as Tone from "tone";
 import { IconButton } from "@mui/material";
 import { SolfeggioControls } from "./components/SolfeggioControls";
 import { BinauralControls } from "./components/BinauralControls";
@@ -14,13 +12,15 @@ import { FrequencyCanvas } from "./components/FrequencyCanvas";
 import { ThemeProvider } from "@mui/material/styles";
 import CssBaseline from "@mui/material/CssBaseline";
 import { theme } from "./theme";
+import * as Tone from 'tone';
+
 declare global {
   interface Window {
-    synthLeft: any;
-    synthRight: any;
-    synthNoise: any;
-    harmonic: any;
-    harmonicLFO: any;
+    synthLeft: Tone.Synth;
+    synthRight: Tone.Synth;
+    synthNoise: Tone.Noise;
+    harmonic: Tone.PolySynth;
+    harmonicLFO: Tone.LFO;
   }
 }
 
