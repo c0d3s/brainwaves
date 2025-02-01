@@ -31,4 +31,23 @@ export const BASE_FREQ = {
   sol: 741,
   la: 852,
   universe: 963,
+  c: 261.63,  // Middle C
+  d: 293.66,  // D
+  e: 329.63,  // E
+  g: 392.00,  // G
+  a: 440.00,  // A
+  c2: 523.25, // C (octave up)
+
 } as const;
+
+export const BASE_FREQ_COLUMNS = {
+  foundation: 1,
+  healing: 1,
+  universe: 1,
+  c: 2,
+  d: 2,
+  e: 2,
+  g: 2,
+  a: 2,
+  c2: 2,
+}
