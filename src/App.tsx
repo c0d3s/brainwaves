@@ -52,7 +52,11 @@ function App() {
     <ThemeProvider theme={theme}>
       <CssBaseline />
       <div>
-        <IconButton color="primary">
+        <IconButton
+          href="https://simple.wikipedia.org/wiki/Binaural_beats"
+          target="_blank"
+          color="primary"
+        >
           <img src={brainwavesLogo} className="logo" alt="Brainwaves logo" />
         </IconButton>
       </div>
