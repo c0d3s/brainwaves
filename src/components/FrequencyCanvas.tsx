@@ -4,7 +4,7 @@ import { IconButton } from "@mui/material";
 import { TuneOutlined } from "@mui/icons-material";
 
 interface Props {
-  solfeggioFreq: number;
+  baseFreq: number;
   binauralFreqMin: number;
   binauralFreqMax: number;
   onFrequencyChange: (leftFreq: number, rightFreq: number) => void;
@@ -13,7 +13,7 @@ interface Props {
 }
 
 export function FrequencyCanvas({
-  solfeggioFreq,
+  baseFreq,
   binauralFreqMin,
   binauralFreqMax,
   onFrequencyChange,
@@ -28,12 +28,12 @@ export function FrequencyCanvas({
   // Memoize frequency ranges since they only depend on props
   const frequencyRanges = useMemo(
     () => ({
-      yMin: solfeggioFreq * 0.75,
-      yMax: solfeggioFreq * 1.5,
+      yMin: baseFreq * 0.75,
+      yMax: baseFreq * 1.5,
       xMin: binauralFreqMin,
       xMax: binauralFreqMax,
     }),
-    [solfeggioFreq, binauralFreqMin, binauralFreqMax],
+    [baseFreq, binauralFreqMin, binauralFreqMax],
   );
 
   // Memoize the frequency calculation function
@@ -121,7 +121,7 @@ export function FrequencyCanvas({
     }
   }, []);
 
-  // Reset Y position when solfeggio changes
+  // Reset Y position when base changes
   useEffect(() => {
     if (point && canvasRef.current) {
       const newPoint = {
@@ -134,7 +134,7 @@ export function FrequencyCanvas({
         debouncedFrequencyChange(frequencies.leftFreq, frequencies.rightFreq);
       }
     }
-  }, [solfeggioFreq]);
+  }, [baseFreq]);
 
   // Reset X position when binaural range changes
   useEffect(() => {

@@ -21,7 +21,7 @@ export const BINAURAL_FREQ = {
   },
 } as const;
 
-export const SOLFEGGIO_FREQ = {
+export const BASE_FREQ = {
   foundation: 174,
   healing: 285,
   ut: 396,

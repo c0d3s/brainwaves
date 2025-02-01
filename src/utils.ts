@@ -1,15 +1,15 @@
-import { BINAURAL_FREQ, SOLFEGGIO_FREQ } from "./constants";
+import { BINAURAL_FREQ, BASE_FREQ } from "./constants";
 
 export const calcFreq = (
   side: "left" | "right",
-  solfeggio: keyof typeof SOLFEGGIO_FREQ,
+  base: keyof typeof BASE_FREQ,
   binaural: keyof typeof BINAURAL_FREQ,
   randomBeat: boolean = false,
 ) => {
-  const solfeggioFreq = SOLFEGGIO_FREQ[solfeggio];
-  if (side === "left") return solfeggioFreq;
+  const baseFreq = BASE_FREQ[base];
+  if (side === "left") return baseFreq;
   return (
-    solfeggioFreq +
+    baseFreq +
     (randomBeat ? calcRandomBeat(binaural) : calcCenterBeat(binaural))
   );
 };

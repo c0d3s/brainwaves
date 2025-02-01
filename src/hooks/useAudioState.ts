@@ -1,9 +1,9 @@
 import { useState, useEffect } from "react";
 import * as Tone from "tone";
 import { calcRandomBeat } from "../utils";
-import { BINAURAL_FREQ, SOLFEGGIO_FREQ } from "../constants";
+import { BINAURAL_FREQ, BASE_FREQ } from "../constants";
 
-const DEFAULT_SOLFEGGIO: keyof typeof SOLFEGGIO_FREQ = "ut";
+const DEFAULT_BASE: keyof typeof BASE_FREQ = "ut";
 const DEFAULT_BINAURAL: keyof typeof BINAURAL_FREQ = "alpha";
 
 interface SynthRefs {
@@ -36,7 +36,7 @@ export function useAudioState({
 }: SynthRefs) {
   // State declarations
   const [isPlaying, setIsPlaying] = useState(false);
-  const [solfeggio, setSolfeggio] = useState<keyof typeof SOLFEGGIO_FREQ>("ut");
+  const [base, setBase] = useState<keyof typeof BASE_FREQ>("ut");
   const [binaural, setBinaural] = useState<keyof typeof BINAURAL_FREQ>("alpha");
   const [noiseType, setNoiseType] = useState<
     "white" | "pink" | "brown" | "off"
@@ -44,10 +44,10 @@ export function useAudioState({
   const [beat, setBeat] = useState(0);
   const [oscillatorOptions, setOscillatorOptions] = useState<OscillatorOptions>(
     {
-      left: { frequency: SOLFEGGIO_FREQ[DEFAULT_SOLFEGGIO], pan: -1 },
+      left: { frequency: BASE_FREQ[DEFAULT_BASE], pan: -1 },
       right: {
         frequency:
-          SOLFEGGIO_FREQ[DEFAULT_SOLFEGGIO] +
+          BASE_FREQ[DEFAULT_BASE] +
           BINAURAL_FREQ[DEFAULT_BINAURAL].min,
         pan: 1,
       },
@@ -153,7 +153,7 @@ export function useAudioState({
 
   return {
     isPlaying,
-    solfeggio,
+    base,
     binaural,
     noiseType,
     beat,
@@ -163,7 +163,7 @@ export function useAudioState({
     updateNoise,
     playTone,
     randomizeBeat,
-    setSolfeggio,
+    setBase,
     setBinaural,
     setNoiseType,
     updateSynthFrequency,
