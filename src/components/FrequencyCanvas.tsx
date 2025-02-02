@@ -187,7 +187,7 @@ export function FrequencyCanvas({
       ) => {
         ctx.beginPath();
         ctx.strokeStyle = color;
-        ctx.lineWidth = amplitude > 30 ? 16 : 2;
+        ctx.lineWidth = amplitude > 30 ? 8 : 2;
 
         // Enable anti-aliasing
         ctx.lineCap = "round";
@@ -248,7 +248,7 @@ export function FrequencyCanvas({
         oscillatorOptions.right.frequency - oscillatorOptions.left.frequency,
         "rgba(255, 100, 100, 0.5)",
         canvas.height * 0.5,
-        60, // Slightly larger amplitude for better visibility
+        60,
       );
 
       // Draw current position
