@@ -58,6 +58,7 @@ export function useAudioState({
     pan: 0,
   });
   const [isInitialized, setIsInitialized] = useState(false);
+  const [noiseVolume, setNoiseVolume] = useState(0.5);
 
   const updateSynthFrequency = (
     synth: Tone.Synth,
@@ -95,6 +96,9 @@ export function useAudioState({
 
       // Update type
       synthNoise.current.type = noiseType === "off" ? "white" : noiseType;
+      
+      // Set volume
+      synthNoise.current.volume.value = 20 * Math.log10(noiseVolume); // Convert linear to dB
 
       // Start if playing and not off
       if (isPlaying && noiseType !== "off") {
@@ -141,7 +145,7 @@ export function useAudioState({
 
   useEffect(() => {
     updateNoise();
-  }, [noiseType, isPlaying]);
+  }, [noiseType, isPlaying, noiseVolume]);
 
   useEffect(() => {
     if (oscillatorOptions.left.frequency < oscillatorOptions.right.frequency) {
@@ -167,5 +171,7 @@ export function useAudioState({
     setBinaural,
     setNoiseType,
     updateSynthFrequency,
+    noiseVolume,
+    setNoiseVolume,
   };
 }

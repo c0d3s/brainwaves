@@ -81,6 +81,8 @@ function App() {
           <NoiseControls
             noiseType={audioState.noiseType}
             setNoiseType={audioState.setNoiseType}
+            noiseVolume={audioState.noiseVolume}
+            setNoiseVolume={audioState.setNoiseVolume}
           />
         </div>
         <div className="card">

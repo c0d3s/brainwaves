@@ -1,4 +1,4 @@
-import { ButtonGroup, Button, IconButton } from "@mui/material";
+import { ButtonGroup, Button, IconButton, Slider } from "@mui/material";
 import { AirOutlined } from "@mui/icons-material";
 
 type NoiseType = "white" | "pink" | "brown" | "off";
@@ -6,9 +6,16 @@ type NoiseType = "white" | "pink" | "brown" | "off";
 interface Props {
   noiseType: NoiseType;
   setNoiseType: (value: NoiseType) => void;
+  noiseVolume: number;
+  setNoiseVolume: (value: number) => void;
 }
 
-export function NoiseControls({ noiseType, setNoiseType }: Props) {
+export function NoiseControls({ 
+  noiseType, 
+  setNoiseType, 
+  noiseVolume, 
+  setNoiseVolume 
+}: Props) {
   return (
     <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
       <IconButton color="secondary">
@@ -39,6 +46,24 @@ export function NoiseControls({ noiseType, setNoiseType }: Props) {
           </Button>
         ))}
       </ButtonGroup>
+      <Slider
+        orientation="horizontal"
+        min={0}
+        max={1}
+        step={0.01}
+        value={noiseVolume ?? 0.5}
+        onChange={(_, newValue) => setNoiseVolume(newValue as number)}
+        sx={{ 
+          width: 75,
+          ml: 2,
+          '& .MuiSlider-thumb': {
+            color: noiseType === 'off' ? 'secondary.main' : 'primary.main',
+          },
+          '& .MuiSlider-track': {
+            color: noiseType === 'off' ? 'secondary.main' : 'primary.main',
+          }
+        }}
+      />
     </div>
   );
 }
