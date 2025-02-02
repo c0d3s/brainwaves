@@ -195,12 +195,12 @@ export function FrequencyCanvas({
 
         // Calculate points for 1 second of time
         const steps = canvas.width * 2;
-        const dx = canvas.width / steps;
+        const stepWidth = canvas.width / steps;
         let peakX = -1;
         let maxY = -Infinity;
 
         for (let i = 0; i <= steps; i++) {
-          const x = i * dx;
+          const x = i * stepWidth;
           // Convert x position to time (0 to 1 second)
           const time = x / canvas.width;
           // Calculate y using frequency in Hz (cycles per second)
@@ -217,7 +217,7 @@ export function FrequencyCanvas({
           if (i === 0) {
             ctx.moveTo(x, y);
           } else {
-            const prevX = (i - 1) * dx;
+            const prevX = (i - 1) * stepWidth;
             const prevTime = prevX / canvas.width;
             const prevY =
               Math.sin(2 * Math.PI * frequency * prevTime + phase) * amplitude +
