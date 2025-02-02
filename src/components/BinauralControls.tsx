@@ -9,21 +9,19 @@ interface Props {
 
 export function BinauralControls({ binaural, setBinaural }: Props) {
   return (
-    <div>
-      <div>
-        <IconButton color="secondary">
-          <GraphicEqOutlined />
-        </IconButton>
-      </div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <IconButton color="secondary">
+        <GraphicEqOutlined />
+      </IconButton>
       <ButtonGroup
-        orientation="vertical"
+        orientation="horizontal"
         variant="contained"
         sx={{
           "& .MuiButton-root": {
-            marginBottom: "8px",
+            marginRight: "8px",
             borderColor: "primary.main",
             "&:last-child": {
-              marginBottom: 0,
+              marginRight: 0,
               borderColor: "primary.main",
             },
           },

@@ -51,27 +51,25 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <div style={{ display: "flex", gap: "2rem", justifyContent: "center", alignItems: "center" }}>
-        <div className="card">
-          <IconButton
-            href="https://simple.wikipedia.org/wiki/Binaural_beats"
-            target="_blank"
-            color="primary"
-          >
-            <img src={brainwavesLogo} className="logo" alt="Brainwaves logo" />
-          </IconButton>
-        </div>
-        <div className="card">
-          <PlayControls
-            isPlaying={audioState.isPlaying}
-            beat={audioState.beat}
-            onPlay={audioState.playTone}
-            onRandomize={audioState.randomizeBeat}
-          />
-        </div>
+      <div className="card">
+        <IconButton
+          href="https://simple.wikipedia.org/wiki/Binaural_beats"
+          target="_blank"
+          color="primary"
+        >
+          <img src={brainwavesLogo} className="logo" alt="Brainwaves logo" />
+        </IconButton>
       </div>
       <div className="card">
-        <div style={{ display: "flex", gap: "2rem", justifyContent: "center" }}>
+        <PlayControls
+          isPlaying={audioState.isPlaying}
+          beat={audioState.beat}
+          onPlay={audioState.playTone}
+          onRandomize={audioState.randomizeBeat}
+        />
+      </div>
+      <div className="card" style={{display: "flex", alignContent: "center", flexDirection: "column"}}>
+        <div style={{ display: "flex", gap: "2rem", justifyContent: "center", flexDirection: "column", alignContent: "center", margin: '0 auto'}}>
           <BaseControls
             base={audioState.base}
             setBase={audioState.setBase}

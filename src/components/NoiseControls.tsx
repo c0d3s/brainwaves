@@ -10,21 +10,19 @@ interface Props {
 
 export function NoiseControls({ noiseType, setNoiseType }: Props) {
   return (
-    <div>
-      <div>
-        <IconButton color="secondary">
-          <AirOutlined />
-        </IconButton>
-      </div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <IconButton color="secondary">
+        <AirOutlined />
+      </IconButton>
       <ButtonGroup
-        orientation="vertical"
+        orientation="horizontal"
         variant="contained"
         sx={{
           "& .MuiButton-root": {
-            marginBottom: "8px",
+            marginRight: "8px",
             borderColor: "primary.main",
             "&:last-child": {
-              marginBottom: 0,
+              marginRight: 0,
               borderColor: "primary.main",
             },
           },

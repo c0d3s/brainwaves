@@ -22,14 +22,14 @@ export function BaseControls({ base, setBase }: Props) {
 
   const renderButtonGroup = (keys: string[]) => (
     <ButtonGroup
-      orientation="vertical"
+      orientation="horizontal"
       variant="contained"
       sx={{
         "& .MuiButton-root": {
-          marginBottom: "8px",
+          marginRight: "8px",
           borderColor: "primary.main",
           "&:last-child": {
-            marginBottom: 0,
+            marginRight: 0,
             borderColor: "primary.main",
           },
         },
@@ -49,18 +49,11 @@ export function BaseControls({ base, setBase }: Props) {
   );
 
   return (
-    <div>
-      <div>
-        <IconButton color="secondary" onClick={rotateColumn}>
-          <WaterOutlined />
-        </IconButton>
-      </div>
+    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+      <IconButton color="secondary" onClick={rotateColumn}>
+        <WaterOutlined />
+      </IconButton>
       <Box sx={{ 
-        display: "flex", 
-        justifyContent: "center",
-        width: "120px",
-        height: "300px",
-        margin: "0 auto"
       }}>
         {activeColumn === 0 && renderButtonGroup(column0Keys)}
         {activeColumn === 1 && renderButtonGroup(column1Keys)}
