@@ -51,22 +51,26 @@ function App() {
   return (
     <ThemeProvider theme={theme}>
       <CssBaseline />
-      <div>
-        <IconButton
-          href="https://simple.wikipedia.org/wiki/Binaural_beats"
-          target="_blank"
-          color="primary"
-        >
-          <img src={brainwavesLogo} className="logo" alt="Brainwaves logo" />
-        </IconButton>
+      <div style={{ display: "flex", gap: "2rem", justifyContent: "center", alignItems: "center" }}>
+        <div className="card">
+          <IconButton
+            href="https://simple.wikipedia.org/wiki/Binaural_beats"
+            target="_blank"
+            color="primary"
+          >
+            <img src={brainwavesLogo} className="logo" alt="Brainwaves logo" />
+          </IconButton>
+        </div>
+        <div className="card">
+          <PlayControls
+            isPlaying={audioState.isPlaying}
+            beat={audioState.beat}
+            onPlay={audioState.playTone}
+            onRandomize={audioState.randomizeBeat}
+          />
+        </div>
       </div>
       <div className="card">
-        <PlayControls
-          isPlaying={audioState.isPlaying}
-          beat={audioState.beat}
-          onPlay={audioState.playTone}
-          onRandomize={audioState.randomizeBeat}
-        />
         <div style={{ display: "flex", gap: "2rem", justifyContent: "center" }}>
           <BaseControls
             base={audioState.base}
@@ -81,14 +85,16 @@ function App() {
             setNoiseType={audioState.setNoiseType}
           />
         </div>
-        <FrequencyCanvas
-          baseFreq={BASE_FREQ[audioState.base]}
-          binauralFreqMin={BINAURAL_FREQ[audioState.binaural].min}
-          binauralFreqMax={BINAURAL_FREQ[audioState.binaural].max}
-          onFrequencyChange={handleFrequencyChange}
-          oscillatorOptions={audioState.oscillatorOptions}
-          beat={audioState.beat}
-        />
+        <div className="card">
+          <FrequencyCanvas
+            baseFreq={BASE_FREQ[audioState.base]}
+            binauralFreqMin={BINAURAL_FREQ[audioState.binaural].min}
+            binauralFreqMax={BINAURAL_FREQ[audioState.binaural].max}
+            onFrequencyChange={handleFrequencyChange}
+            oscillatorOptions={audioState.oscillatorOptions}
+            beat={audioState.beat}
+          />
+        </div>
       </div>
     </ThemeProvider>
   );
