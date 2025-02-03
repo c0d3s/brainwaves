@@ -173,7 +173,7 @@ export function useAudioState({
   }, [oscillatorOptions.left.frequency, oscillatorOptions.right.frequency]);
 
   useEffect(() => {
-    let driftTimer: NodeJS.Timeout;
+    let driftTimer: ReturnType<typeof setInterval>;
 
     if (driftOptions.isDrifting && isPlaying) {
       driftTimer = setInterval(() => {

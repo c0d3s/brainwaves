@@ -9,20 +9,13 @@ import { Button } from "@mui/material";
 interface Props {
   isPlaying: boolean;
   beat: number;
-  isDrifting: boolean;
-  onPlay: () => void;
+  onPlay: () => Promise<void>;
   onRandomize: () => void;
   onDrift: () => void;
+  isDrifting: boolean;
 }
 
-export function PlayControls({ 
-  isPlaying, 
-  beat, 
-  isDrifting, 
-  onPlay, 
-  onRandomize, 
-  onDrift 
-}: Props) {
+export function PlayControls({ isPlaying, onPlay, onRandomize, onDrift, beat, isDrifting   }: Props) {
   return (
     <div>
       <Button
@@ -36,17 +29,18 @@ export function PlayControls({
       </Button>
       <Button
         size="small"
-        variant="contained"
+        variant="outlined"
         disabled={!isPlaying}
         onClick={onRandomize}
         sx={{ margin: "1rem" }}
+        color="secondary"
       >
-        <ShuffleOutlined />
+        <ShuffleOutlined /> {beat.toFixed(1)}
       </Button>
       <Button
         size="large"
         variant={isDrifting ? "contained" : "outlined"}
-        color={isDrifting ? "primary" : "secondary"}
+        color={isDrifting ? "primary" : "secondary"}  
         disabled={!isPlaying}
         onClick={onDrift}
         sx={{ margin: "1rem" }}
