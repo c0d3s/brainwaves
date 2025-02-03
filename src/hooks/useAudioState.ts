@@ -26,6 +26,15 @@ interface OscillatorOptions {
   };
 }
 
+interface DriftOptions {
+  isDrifting: boolean;
+  driftDirection: 'asc' | 'desc';
+  driftMin: number;
+  driftMax: number;
+  driftInterval: number;
+  driftTime: number;
+}
+
 export function useAudioState({
   synthLeft,
   synthRight,
@@ -59,6 +68,14 @@ export function useAudioState({
   });
   const [isInitialized, setIsInitialized] = useState(false);
   const [noiseVolume, setNoiseVolume] = useState(0.5);
+  const [driftOptions, setDriftOptions] = useState<DriftOptions>({
+    isDrifting: false,
+    driftDirection: 'desc',
+    driftInterval: 1,
+    driftTime: 1000,
+    driftMin: BINAURAL_FREQ[binaural].min,
+    driftMax: BINAURAL_FREQ[binaural].max
+  });
 
   const updateSynthFrequency = (
     synth: Tone.Synth,
@@ -155,6 +172,60 @@ export function useAudioState({
     }
   }, [oscillatorOptions.left.frequency, oscillatorOptions.right.frequency]);
 
+  useEffect(() => {
+    let driftTimer: NodeJS.Timeout;
+
+    if (driftOptions.isDrifting && isPlaying) {
+      driftTimer = setInterval(() => {
+        const currentBeat = oscillatorOptions.right.frequency - oscillatorOptions.left.frequency;
+        let newBeat = currentBeat;
+
+        if (driftOptions.driftDirection === 'desc') {
+          newBeat -= driftOptions.driftInterval;
+          if (newBeat <= driftOptions.driftMin) {
+            newBeat = driftOptions.driftMin;
+            setDriftOptions(prev => ({...prev, driftDirection: 'asc'}));
+          }
+        } else {
+          newBeat += driftOptions.driftInterval;
+          if (newBeat >= driftOptions.driftMax) {
+            newBeat = driftOptions.driftMax;
+            setDriftOptions(prev => ({...prev, driftDirection: 'desc'}));
+          }
+        }
+
+        setBeat(newBeat);
+        const rightFreq = oscillatorOptions.left.frequency + newBeat;
+        updateSynthFrequencies(oscillatorOptions.left.frequency, rightFreq);
+      }, driftOptions.driftTime);
+    }
+
+    return () => {
+      if (driftTimer) {
+        clearInterval(driftTimer);
+      }
+    };
+  }, [
+    driftOptions.isDrifting,
+    driftOptions.driftDirection,
+    driftOptions.driftInterval,
+    driftOptions.driftTime,
+    driftOptions.driftMin,
+    driftOptions.driftMax,
+    isPlaying,
+    oscillatorOptions.left.frequency,
+    oscillatorOptions.right.frequency
+  ]);
+
+  const toggleDrift = () => {
+    setDriftOptions(prev => ({
+      ...prev,
+      isDrifting: !prev.isDrifting,
+      driftMin: BINAURAL_FREQ[binaural].min,
+      driftMax: BINAURAL_FREQ[binaural].max
+    }));
+  };
+
   return {
     isPlaying,
     base,
@@ -173,5 +244,7 @@ export function useAudioState({
     updateSynthFrequency,
     noiseVolume,
     setNoiseVolume,
+    driftOptions,
+    toggleDrift
   };
 }

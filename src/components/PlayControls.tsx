@@ -9,12 +9,20 @@ import { Button } from "@mui/material";
 interface Props {
   isPlaying: boolean;
   beat: number;
+  isDrifting: boolean;
   onPlay: () => void;
   onRandomize: () => void;
   onDrift: () => void;
 }
 
-export function PlayControls({ isPlaying, onPlay, onRandomize, onDrift }: Props) {
+export function PlayControls({ 
+  isPlaying, 
+  beat, 
+  isDrifting, 
+  onPlay, 
+  onRandomize, 
+  onDrift 
+}: Props) {
   return (
     <div>
       <Button
@@ -37,7 +45,8 @@ export function PlayControls({ isPlaying, onPlay, onRandomize, onDrift }: Props)
       </Button>
       <Button
         size="large"
-        variant="contained"
+        variant={isDrifting ? "contained" : "outlined"}
+        color={isDrifting ? "primary" : "secondary"}
         disabled={!isPlaying}
         onClick={onDrift}
         sx={{ margin: "1rem" }}

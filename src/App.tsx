@@ -66,6 +66,8 @@ function App() {
           beat={audioState.beat}
           onPlay={audioState.playTone}
           onRandomize={audioState.randomizeBeat}
+          onDrift={audioState.toggleDrift}
+          isDrifting={audioState.driftOptions.isDrifting}
         />
       </div>
       <div className="card" style={{display: "flex", alignContent: "center", flexDirection: "column"}}>
