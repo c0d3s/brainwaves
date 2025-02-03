@@ -7,12 +7,13 @@ const DEFAULT_BASE: keyof typeof BASE_FREQ = "ut";
 const DEFAULT_BINAURAL: keyof typeof BINAURAL_FREQ = "alpha";
 
 interface SynthRefs {
-  synthLeft: React.RefObject<Tone.Oscillator>;
-  synthRight: React.RefObject<Tone.Oscillator>;
-  synthNoise: React.RefObject<Tone.Noise>;
-  harmonic: React.RefObject<Tone.Oscillator>;
-  harmonicLFO: React.RefObject<Tone.LFO>;
-  updateFrequency: (osc: Tone.Oscillator, freq: number) => void;
+  synthLeft: React.RefObject<Tone.Oscillator | null>;
+  synthRight: React.RefObject<Tone.Oscillator | null>;
+  synthNoise: React.RefObject<Tone.Noise | null>;
+  harmonic: React.RefObject<Tone.Oscillator | null>;
+  harmonicLFO: React.RefObject<Tone.LFO | null>;
+  updateFrequency: (osc: Tone.Oscillator, newFreq: number) => void;
+  initializeSynths: () => Promise<void>;
 }
 
 interface OscillatorOptions {
@@ -42,6 +43,7 @@ export function useAudioState({
   harmonic,
   harmonicLFO,
   updateFrequency,
+  initializeSynths,
 }: SynthRefs) {
   // State declarations
   const [isPlaying, setIsPlaying] = useState(false);
@@ -135,11 +137,18 @@ export function useAudioState({
 
   const playTone = async () => {
     if (!isPlaying) {
-      synthLeft.current?.start();
-      synthRight.current?.start();
-      harmonic.current?.start();
-      harmonicLFO.current?.start();
-      if (noiseType !== "off") synthNoise.current?.start();
+      try {
+        await initializeSynths();
+        
+        synthLeft.current?.start();
+        synthRight.current?.start();
+        harmonic.current?.start();
+        harmonicLFO.current?.start();
+        if (noiseType !== "off") synthNoise.current?.start();
+      } catch (error) {
+        console.error("Failed to start audio:", error);
+        return;
+      }
     } else {
       synthLeft.current?.stop();
       synthRight.current?.stop();

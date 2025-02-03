@@ -32,6 +32,7 @@ function App() {
     harmonic,
     harmonicLFO,
     updateFrequency,
+    initializeSynths
   } = useSynths();
 
   const audioState = useAudioState({
@@ -41,6 +42,7 @@ function App() {
     harmonic,
     harmonicLFO,
     updateFrequency,
+    initializeSynths
   });
 
   const handleFrequencyChange = (leftFreq: number, rightFreq: number) => {
