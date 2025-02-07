@@ -138,10 +138,6 @@ export function useAudioState({
         );
         synthLeft.current?.start();
         synthRight.current?.start();
-        console.log(
-          synthLeft.current?.frequency.value,
-          synthRight.current?.frequency.value,
-        );
         harmonic.current?.start();
         harmonicLFO.current?.start();
         if (noiseType !== "off") synthNoise.current?.start();
