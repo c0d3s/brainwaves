@@ -16,7 +16,7 @@ interface SynthRefs {
   initializeSynths: () => Promise<void>;
 }
 
-interface OscillatorOptions {
+export interface OscillatorOptions {
   left: {
     frequency: number;
     pan: number;

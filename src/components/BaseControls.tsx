@@ -13,9 +13,11 @@ export function BaseControls({ base, setBase }: Props) {
 
   // Define which frequencies go in which column
   const column2Keys = Object.entries(BASE_FREQ_COLUMNS)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .filter(([_, value]) => value === 1)
     .map(([key]) => key);
   const column1Keys = Object.entries(BASE_FREQ_COLUMNS)
+    // eslint-disable-next-line @typescript-eslint/no-unused-vars
     .filter(([_, value]) => value === 2)
     .map(([key]) => key);
   const column0Keys = Object.keys(BASE_FREQ).filter(
