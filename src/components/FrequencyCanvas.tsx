@@ -1,7 +1,5 @@
 import { useRef, useEffect, useState, useCallback, useMemo } from "react";
 import debounce from "lodash/debounce";
-import { IconButton } from "@mui/material";
-import { TuneOutlined } from "@mui/icons-material";
 import { OscillatorOptions } from "../hooks/useAudioState";
 interface Props {
   baseFreq: number;
