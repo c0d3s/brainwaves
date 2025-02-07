@@ -73,7 +73,7 @@ export function useAudioState({
     isDrifting: false,
     driftDirection: "desc",
     driftInterval: 1,
-    driftTime: 1000,
+    driftTime: 5000,
     driftMin: BINAURAL_FREQ[binaural].min,
     driftMax: BINAURAL_FREQ[binaural].max,
   });
