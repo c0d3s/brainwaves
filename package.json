@@ -3,7 +3,7 @@
   "private": true,
   "version": "0.0.0",
   "type": "module",
-  "homepage": "http://codyknauer.com/brainwaves",
+  "homepage": "http://c0d3s.github.io/brainwaves",
   "scripts": {
     "dev": "vite",
     "build": "tsc -b && vite build",
