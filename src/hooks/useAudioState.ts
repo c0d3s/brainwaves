@@ -29,7 +29,7 @@ interface OscillatorOptions {
 
 interface DriftOptions {
   isDrifting: boolean;
-  driftDirection: 'asc' | 'desc';
+  driftDirection: "asc" | "desc";
   driftMin: number;
   driftMax: number;
   driftInterval: number;
@@ -58,8 +58,7 @@ export function useAudioState({
       left: { frequency: BASE_FREQ[DEFAULT_BASE], pan: -1 },
       right: {
         frequency:
-          BASE_FREQ[DEFAULT_BASE] +
-          BINAURAL_FREQ[DEFAULT_BINAURAL].min,
+          BASE_FREQ[DEFAULT_BASE] + BINAURAL_FREQ[DEFAULT_BINAURAL].min,
         pan: 1,
       },
     },
@@ -72,11 +71,11 @@ export function useAudioState({
   const [noiseVolume, setNoiseVolume] = useState(0.5);
   const [driftOptions, setDriftOptions] = useState<DriftOptions>({
     isDrifting: false,
-    driftDirection: 'desc',
+    driftDirection: "desc",
     driftInterval: 1,
     driftTime: 1000,
     driftMin: BINAURAL_FREQ[binaural].min,
-    driftMax: BINAURAL_FREQ[binaural].max
+    driftMax: BINAURAL_FREQ[binaural].max,
   });
 
   const updateSynthFrequency = (
@@ -112,14 +111,8 @@ export function useAudioState({
     try {
       // Always stop first to prevent overlapping
       synthNoise.current.stop();
-
-      // Update type
       synthNoise.current.type = noiseType === "off" ? "white" : noiseType;
-      
-      // Set volume
       synthNoise.current.volume.value = 20 * Math.log10(noiseVolume); // Convert linear to dB
-
-      // Start if playing and not off
       if (isPlaying && noiseType !== "off") {
         synthNoise.current.start();
       }
@@ -139,9 +132,16 @@ export function useAudioState({
     if (!isPlaying) {
       try {
         await initializeSynths();
-        
+        updateSynthFrequencies(
+          oscillatorOptions.left.frequency,
+          oscillatorOptions.right.frequency,
+        );
         synthLeft.current?.start();
         synthRight.current?.start();
+        console.log(
+          synthLeft.current?.frequency.value,
+          synthRight.current?.frequency.value,
+        );
         harmonic.current?.start();
         harmonicLFO.current?.start();
         if (noiseType !== "off") synthNoise.current?.start();
@@ -186,20 +186,21 @@ export function useAudioState({
 
     if (driftOptions.isDrifting && isPlaying) {
       driftTimer = setInterval(() => {
-        const currentBeat = oscillatorOptions.right.frequency - oscillatorOptions.left.frequency;
+        const currentBeat =
+          oscillatorOptions.right.frequency - oscillatorOptions.left.frequency;
         let newBeat = currentBeat;
 
-        if (driftOptions.driftDirection === 'desc') {
+        if (driftOptions.driftDirection === "desc") {
           newBeat -= driftOptions.driftInterval;
           if (newBeat <= driftOptions.driftMin) {
             newBeat = driftOptions.driftMin;
-            setDriftOptions(prev => ({...prev, driftDirection: 'asc'}));
+            setDriftOptions((prev) => ({ ...prev, driftDirection: "asc" }));
           }
         } else {
           newBeat += driftOptions.driftInterval;
           if (newBeat >= driftOptions.driftMax) {
             newBeat = driftOptions.driftMax;
-            setDriftOptions(prev => ({...prev, driftDirection: 'desc'}));
+            setDriftOptions((prev) => ({ ...prev, driftDirection: "desc" }));
           }
         }
 
@@ -223,15 +224,15 @@ export function useAudioState({
     driftOptions.driftMax,
     isPlaying,
     oscillatorOptions.left.frequency,
-    oscillatorOptions.right.frequency
+    oscillatorOptions.right.frequency,
   ]);
 
   const toggleDrift = () => {
-    setDriftOptions(prev => ({
+    setDriftOptions((prev) => ({
       ...prev,
       isDrifting: !prev.isDrifting,
       driftMin: BINAURAL_FREQ[binaural].min,
-      driftMax: BINAURAL_FREQ[binaural].max
+      driftMax: BINAURAL_FREQ[binaural].max,
     }));
   };
 
@@ -254,6 +255,6 @@ export function useAudioState({
     noiseVolume,
     setNoiseVolume,
     driftOptions,
-    toggleDrift
+    toggleDrift,
   };
 }

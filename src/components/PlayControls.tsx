@@ -15,7 +15,14 @@ interface Props {
   isDrifting: boolean;
 }
 
-export function PlayControls({ isPlaying, onPlay, onRandomize, onDrift, beat, isDrifting   }: Props) {
+export function PlayControls({
+  isPlaying,
+  onPlay,
+  onRandomize,
+  onDrift,
+  beat,
+  isDrifting,
+}: Props) {
   return (
     <div>
       <Button
@@ -40,7 +47,7 @@ export function PlayControls({ isPlaying, onPlay, onRandomize, onDrift, beat, is
       <Button
         size="large"
         variant={isDrifting ? "contained" : "outlined"}
-        color={isDrifting ? "primary" : "secondary"}  
+        color={isDrifting ? "primary" : "secondary"}
         disabled={!isPlaying}
         onClick={onDrift}
         sx={{ margin: "1rem" }}

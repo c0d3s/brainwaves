@@ -32,7 +32,7 @@ function App() {
     harmonic,
     harmonicLFO,
     updateFrequency,
-    initializeSynths
+    initializeSynths,
   } = useSynths();
 
   const audioState = useAudioState({
@@ -42,7 +42,7 @@ function App() {
     harmonic,
     harmonicLFO,
     updateFrequency,
-    initializeSynths
+    initializeSynths,
   });
 
   const handleFrequencyChange = (leftFreq: number, rightFreq: number) => {
@@ -72,12 +72,25 @@ function App() {
           isDrifting={audioState.driftOptions.isDrifting}
         />
       </div>
-      <div className="card" style={{display: "flex", alignContent: "center", flexDirection: "column"}}>
-        <div style={{ display: "flex", gap: "2rem", justifyContent: "center", flexDirection: "column", alignContent: "center", margin: '0 auto'}}>
-          <BaseControls
-            base={audioState.base}
-            setBase={audioState.setBase}
-          />
+      <div
+        className="card"
+        style={{
+          display: "flex",
+          alignContent: "center",
+          flexDirection: "column",
+        }}
+      >
+        <div
+          style={{
+            display: "flex",
+            gap: "2rem",
+            justifyContent: "center",
+            flexDirection: "column",
+            alignContent: "center",
+            margin: "0 auto",
+          }}
+        >
+          <BaseControls base={audioState.base} setBase={audioState.setBase} />
           <BinauralControls
             binaural={audioState.binaural}
             setBinaural={audioState.setBinaural}

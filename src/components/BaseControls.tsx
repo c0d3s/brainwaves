@@ -12,9 +12,15 @@ export function BaseControls({ base, setBase }: Props) {
   const [activeColumn, setActiveColumn] = useState(0);
 
   // Define which frequencies go in which column
-  const column2Keys = Object.entries(BASE_FREQ_COLUMNS).filter(([_, value]) => value === 1).map(([key]) => key);
-  const column1Keys = Object.entries(BASE_FREQ_COLUMNS).filter(([_, value]) => value === 2).map(([key]) => key);
-  const column0Keys = Object.keys(BASE_FREQ).filter((value) => !column1Keys.includes(value) && !column2Keys.includes(value));
+  const column2Keys = Object.entries(BASE_FREQ_COLUMNS)
+    .filter(([_, value]) => value === 1)
+    .map(([key]) => key);
+  const column1Keys = Object.entries(BASE_FREQ_COLUMNS)
+    .filter(([_, value]) => value === 2)
+    .map(([key]) => key);
+  const column0Keys = Object.keys(BASE_FREQ).filter(
+    (value) => !column1Keys.includes(value) && !column2Keys.includes(value),
+  );
 
   const rotateColumn = () => {
     setActiveColumn((prev) => (prev + 1) % 3);
@@ -49,12 +55,11 @@ export function BaseControls({ base, setBase }: Props) {
   );
 
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
       <IconButton color="secondary" onClick={rotateColumn}>
         <WaterOutlined />
       </IconButton>
-      <Box sx={{ 
-      }}>
+      <Box sx={{}}>
         {activeColumn === 0 && renderButtonGroup(column0Keys)}
         {activeColumn === 1 && renderButtonGroup(column1Keys)}
         {activeColumn === 2 && renderButtonGroup(column2Keys)}

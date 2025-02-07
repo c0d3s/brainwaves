@@ -10,14 +10,14 @@ interface Props {
   setNoiseVolume: (value: number) => void;
 }
 
-export function NoiseControls({ 
-  noiseType, 
-  setNoiseType, 
-  noiseVolume, 
-  setNoiseVolume 
+export function NoiseControls({
+  noiseType,
+  setNoiseType,
+  noiseVolume,
+  setNoiseVolume,
 }: Props) {
   return (
-    <div style={{ display: 'flex', alignItems: 'center', gap: '8px' }}>
+    <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
       <IconButton color="secondary">
         <AirOutlined />
       </IconButton>
@@ -53,15 +53,15 @@ export function NoiseControls({
         step={0.01}
         value={noiseVolume ?? 0.5}
         onChange={(_, newValue) => setNoiseVolume(newValue as number)}
-        sx={{ 
+        sx={{
           width: 75,
           ml: 2,
-          '& .MuiSlider-thumb': {
-            color: noiseType === 'off' ? 'secondary.main' : 'primary.main',
+          "& .MuiSlider-thumb": {
+            color: noiseType === "off" ? "secondary.main" : "primary.main",
           },
-          '& .MuiSlider-track': {
-            color: noiseType === 'off' ? 'secondary.main' : 'primary.main',
-          }
+          "& .MuiSlider-track": {
+            color: noiseType === "off" ? "secondary.main" : "primary.main",
+          },
         }}
       />
     </div>

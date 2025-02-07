@@ -12,7 +12,7 @@ export function useSynths() {
     // Only initialize if they haven't been created yet
     if (!synthLeft.current) {
       await Tone.start();
-      
+
       synthLeft.current = new Tone.Oscillator({
         type: "sine",
         volume: -20,
@@ -42,9 +42,12 @@ export function useSynths() {
     }
   }, []);
 
-  const updateFrequency = useCallback((osc: Tone.Oscillator, newFreq: number) => {
-    osc.frequency.exponentialRampTo(newFreq, 0.1);
-  }, []);
+  const updateFrequency = useCallback(
+    (osc: Tone.Oscillator, newFreq: number) => {
+      osc.frequency.exponentialRampTo(newFreq, 0.1);
+    },
+    [],
+  );
 
   return {
     synthLeft,
