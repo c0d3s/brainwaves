@@ -296,10 +296,6 @@ export function FrequencyCanvas({
         gap: "8px",
       }}
     >
-      <IconButton color="secondary">
-        <TuneOutlined />
-      </IconButton>
-
       <div style={{ display: "flex", alignItems: "center", gap: "16px" }}>
         <div
           style={{

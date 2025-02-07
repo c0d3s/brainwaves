@@ -18,7 +18,7 @@ export function NoiseControls({
 }: Props) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-      <IconButton color="secondary">
+      <IconButton disabled>
         <AirOutlined />
       </IconButton>
       <ButtonGroup

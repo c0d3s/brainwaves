@@ -58,8 +58,8 @@ export function BaseControls({ base, setBase }: Props) {
 
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-      <IconButton color="secondary" onClick={rotateColumn}>
-        <WaterOutlined />
+      <IconButton onClick={rotateColumn}>
+        <WaterOutlined color="secondary" />
       </IconButton>
       <Box sx={{}}>
         {activeColumn === 0 && renderButtonGroup(column0Keys)}

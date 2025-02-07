@@ -10,7 +10,7 @@ interface Props {
 export function BinauralControls({ binaural, setBinaural }: Props) {
   return (
     <div style={{ display: "flex", alignItems: "center", gap: "8px" }}>
-      <IconButton color="secondary">
+      <IconButton disabled>
         <GraphicEqOutlined />
       </IconButton>
       <ButtonGroup
